@@ -10,11 +10,10 @@ def r_json(FILE_LOCATION):
 def w_json(data, filename): 
     with open(filename,'w') as f: 
         json.dump(data, f, indent=4)
-
+        
 def r_csv(FILE_LOCATION,separate): 
-    FILE_LOCATION = FILE_LOCATION
-    data = pd.read_csv(FILE_LOCATION, header=None, sep=separate)
-    return data
+    return pd.read_csv(FILE_LOCATION, header=None, sep=separate)
+    #return data
 
 def w_csv(FILE_LOCATION,df):
     df.to_csv (FILE_LOCATION, index = None, header=True)
