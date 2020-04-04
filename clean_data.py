@@ -29,22 +29,29 @@ class Tilda():
         self.data = data
     
     def clean_data (self):
-        df = []
-        df_name = []
+        __df_phone = []
+        __df_name = []
+        __df_email = []
+        __df_medium = []
+        __df_source = []
         for i in range(len(self.data)):
             if check_nan(self.data['Phone'][i]) != 'NaN':
-                df.append(pohone_check(self.data['Phone'][i]))
+                __df_phone.append(pohone_check(self.data['Phone'][i]))
             else:
-                df.append(pohone_check(self.data['телефон'][i]))
+                __df_phone.append(pohone_check(self.data['телефон'][i]))
             if check_nan(self.data['Name'][i]) != 'NaN':
-                df_name.append(check_nan(self.data['Name'][i]))
+                __df_name.append(check_nan(self.data['Name'][i]))
             else:
-                df_name.append(check_nan(self.data['имя'][i]))
-        self.data['Phone'] = df
-        self.data['Name'] = df_name
+                __df_name.append(check_nan(self.data['имя'][i]))
+            __df_email.append(check_nan(self.data['Email'][i]))
+            __df_source.append(check_nan(self.data['utm_source'][i]))
+            __df_medium.append(check_nan(self.data['utm_medium'][i]))
         self.data1 = pd.DataFrame({'Phone':[]})
-        self.data1['Phone'] = self.data['Phone']
-        self.data1['Name'] = self.data['Name']
+        self.data1['Name'] = __df_name
+        self.data1['Email'] = __df_email
+        self.data1['utm_source'] = __df_source
+        self.data1['utm_medium'] = __df_medium
+        self.data1['Phone'] = __df_phone
 
     
     
