@@ -29,9 +29,8 @@ class Mysql():
         for i in self.cursor:
             pass
         if self.source == 'tilda':
-            add_data = ('INSERT IGNORE into tilda(phone, utm_medium) VALUES (%s, %s)')
+            add_data = ('INSERT INTO tilda(phone, name, email, utm_source, utm_medium) VALUES (%s, %s, %s, %s, %s)')
             data_load = self.form_data()
-        print(data_load)
         self.cursor.executemany(add_data, data_load)
         self.db.commit()
         self.cursor.close()
