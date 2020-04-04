@@ -8,6 +8,7 @@ tilda = cd.Tilda(tilda)
 tilda.clean_data()
 tilda.data1 = cd.duplicate(tilda.data1)
 print(tilda.data1)
-#print(tilda.data1[2281])
 a = to_mysql.Mysql('tilda',tilda.data1)
 a.write()
+
+''' hjhj'''
