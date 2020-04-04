@@ -13,7 +13,7 @@ def pohone_check(phone):
         except IndexError:
             break
         j+=1
-    if len(phone)>10:
+    while len(phone)>10:
         phone=phone[2:]
     return phone
 

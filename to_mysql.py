@@ -20,20 +20,25 @@ class Mysql():
     
     def form_data(self):
         records = self.data.to_records(index=False)
-        return list(records)
+        self.data_load = list(records)
 
+    def insert(self, index):
+        if self.source == 'tilda':
+            add_data = ('INSERT INTO tilda(phone, name, email, utm_source, utm_medium) VALUES (%s, %s, %s, %s, %s)')
+        try:
+            self.cursor.execute(add_data, tuple(self.data_load[index]))
+        except mysql.connector.errors.IntegrityError as err:
+            if (err == '1062 (23000)'):
+                print('ok')
+            pass
+        self.db.commit()
+        pass
 
     def write(self):
         self.connect()
-        self.cursor.execute('SELECT idtilda FROM tilda')
-        for i in self.cursor:
-            pass
-        if self.source == 'tilda':
-            add_data = ('INSERT IGNORE into tilda(phone, utm_medium) VALUES (%s, %s)')
-            data_load = self.form_data()
-        print(data_load)
-        self.cursor.executemany(add_data, data_load)
-        self.db.commit()
+        self.form_data()
+        for i in range(len(self.data_load)):
+            self.insert(i)
         self.cursor.close()
         self.db.close()
           
