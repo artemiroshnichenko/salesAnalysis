@@ -17,7 +17,6 @@ class Mysql():
             database = self.database
             )
         self.cursor = self.db.cursor()    
-        return self.cursor
     
     def form_data(self):
         records = self.data.to_records(index=False)
@@ -29,37 +28,41 @@ class Mysql():
         try:
             self.cursor.execute(add_data, tuple(self.data_load[index]))
         except mysql.connector.errors.IntegrityError as err:
-            if err.errno == 1062:
+            if err.errno == 1062: 
+                print(self.data_load[index])
                 self.update(self.data_load[index])
             else:
                 print('Something wrong:', err)
         pass
 
     def update(self, key):
-        __flag = False
-        read_data = (
-                    'SELECT name, email, utm_source, utm_medium FROM sales.tilda WHERE phone = %s' 
-                    )
-        self.cursor.execute(read_data, (key[0],))
-        for (name, email, utm_source, utm_medium) in self.cursor:
-            print(name, email, utm_source, utm_medium)
-            if name != key[1]:
+        if 1:
+            __flag = False
+            print(key)
+            read_data = (
+                        'SELECT name, email, utm_source, utm_medium FROM sales.tilda WHERE phone = %s' 
+                        )
+            self.cursor.execute(read_data, (key[0],))
+            for (name, email, utm_source, utm_medium) in self.cursor:
+                print(key[0], name, email)
+            if name != key[1] and key[1] != 'NaN':
                 name = key[1]
                 __flag = True
-            if email != key[2]:
+            if email != key[2] and key[2] != 'NaN':
                 email = key[2]
                 __flag = True
-            if utm_source != key[3]:
+            if utm_source != key[3] and key[3] != 'NaN':
                 utm_source = key[3]
                 __flag = True
-            if utm_medium != key[4]:
+            if utm_medium != key[4] and key[4] != 'NaN':
                 utm_medium = key[4]
                 __flag = True
             if __flag == True:
                 update_data = ('UPDATE sales.tilda SET name = %s, email = %s, utm_source = %s, utm_medium = %s')
                 self.cursor.execute(update_data, (name, email, utm_source, utm_medium))
                 print('update')
-        pass
+
+
 
     def write(self):
         self.connect()
