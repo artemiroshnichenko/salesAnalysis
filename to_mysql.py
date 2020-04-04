@@ -18,26 +18,25 @@ class Mysql():
         self.cursor = self.db.cursor()    
         return self.cursor
     
+    def form_data(self):
+        records = self.data.to_records(index=False)
+        return list(records)
+
+
     def write(self):
         self.connect()
         self.cursor.execute('SELECT idtilda FROM tilda')
         for i in self.cursor:
             pass
-        try:
-            b = i[0] + 1
-        except UnboundLocalError:
-            b=0
         if self.source == 'tilda':
-            result = [(1,2),('4353453453','34534534534'),("cpc","cpc")]
-            add_data = ('INSERT IGNORE into tilda''(idtilda, phone, utm_medium)''VALUES (%s, %s, %s)')
-            data_load = (result)
-        try:
-            self.cursor.executemany(add_data, data_load)
-        except mysql.connector.errors.IntegrityError:
-            print('wow')
+            add_data = ('INSERT IGNORE into tilda(phone, utm_medium) VALUES (%s, %s)')
+            data_load = self.form_data()
+        print(data_load)
+        self.cursor.executemany(add_data, data_load)
         self.db.commit()
         self.cursor.close()
         self.db.close()
+          
 
     def read(self):
         pass

@@ -6,6 +6,6 @@ import to_mysql
 tilda = rw.r_csv('./tilda.csv', ';', 0)
 tilda = cd.Tilda(tilda) 
 tilda.clean_data()
-print(type(tilda.data['utm_medium'][0]))
+tilda.form_data()
 a=to_mysql.Mysql('tilda',tilda.data)
 a.write()
