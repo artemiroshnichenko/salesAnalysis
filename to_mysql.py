@@ -1,4 +1,5 @@
 import mysql.connector
+from mysql.connector.errors import Error
 
 class Mysql():
     def __init__(self,source,data):
@@ -28,10 +29,8 @@ class Mysql():
         try:
             self.cursor.execute(add_data, tuple(self.data_load[index]))
         except mysql.connector.errors.IntegrityError as err:
-            if (err == '1062 (23000)'):
-                print('ok')
-            pass
-        self.db.commit()
+            if err.errno == 1062:
+                pass
         pass
 
     def write(self):
@@ -39,10 +38,15 @@ class Mysql():
         self.form_data()
         for i in range(len(self.data_load)):
             self.insert(i)
+        self.db.commit()
         self.cursor.close()
         self.db.close()
           
 
     def read(self):
+        pass
+
+    if __name__ == '__main__':
+        
         pass
         

@@ -9,4 +9,3 @@ tilda.clean_data()
 print(tilda.data1)
 a=to_mysql.Mysql('tilda',tilda.data1)
 a.write()
-
