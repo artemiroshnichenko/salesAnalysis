@@ -30,7 +30,35 @@ class Mysql():
             self.cursor.execute(add_data, tuple(self.data_load[index]))
         except mysql.connector.errors.IntegrityError as err:
             if err.errno == 1062:
-                pass
+                self.update(self.data_load[index])
+            else:
+                print('Something wrong:', err)
+        pass
+
+    def update(self, key):
+        __flag = False
+        read_data = (
+                    'SELECT name, email, utm_source, utm_medium FROM sales.tilda WHERE phone = %s' 
+                    )
+        self.cursor.execute(read_data, (key[0],))
+        for (name, email, utm_source, utm_medium) in self.cursor:
+            print(name, email, utm_source, utm_medium)
+            if name != key[1]:
+                name = key[1]
+                __flag = True
+            if email != key[2]:
+                email = key[2]
+                __flag = True
+            if utm_source != key[3]:
+                utm_source = key[3]
+                __flag = True
+            if utm_medium != key[4]:
+                utm_medium = key[4]
+                __flag = True
+            if __flag == True:
+                update_data = ('UPDATE sales.tilda SET name = %s, email = %s, utm_source = %s, utm_medium = %s')
+                self.cursor.execute(update_data, (name, email, utm_source, utm_medium))
+                print('update')
         pass
 
     def write(self):
