@@ -32,10 +32,7 @@ class Mysql():
                 self.cursor.execute(sql, tuple(row))
             except mysql.connector.errors.IntegrityError as err:
                 if err.errno == 1062: 
-                    
-                    if i < 10:
-                        self.update(self.data.iloc[i])
-                    pass
+                    self.update(self.data.iloc[i])
                 else:
                     print('Something wrong:', err)
             # the connection is not autocommitted by default, so we must commit to save our changes
@@ -44,32 +41,29 @@ class Mysql():
 
     def update(self, key):
         if 1:
-            __flag = False
-            #key[0] = int(key[0])
-            print(key['id'])
-            g = int(key['id'])
+            __flag__ = False
+            __id__ = int(key['id'])
             read_data = (
                         'SELECT name, phone, email, utm_source, utm_medium FROM sales.tilda WHERE id = %s' 
                         )
-            self.cursor.execute(read_data, (g,))
+            self.cursor.execute(read_data, (__id__,))
             for (name, phone, email, utm_source, utm_medium) in self.cursor:
-                print(g, name, phone, email, utm_source, utm_medium)
+                (name, phone, email, utm_source, utm_medium)
             if name != key['name'] and key['name'] != 'NaN':
                 name = key['name']
-                __flag = True
+                __flag__ = True
             if email != key['email'] and key['email'] != 'NaN':
                 email = key['email']
-                __flag = True
+                __flag__ = True
             if utm_source != key['utm_source'] and key['utm_source'] != 'NaN':
                 utm_source = key['utm_source']
-                __flag = True
+                __flag__ = True
             if utm_medium != key['utm_medium'] and key['utm_medium'] != 'NaN':
                 utm_medium = key['utm_medium']
-                __flag = True
-            if __flag == True:
-                print(g, name, phone, email, utm_source, utm_medium)
+                __flag__ = True
+            if __flag__ == True:
                 update_data = ('UPDATE sales.tilda SET name = %s, email = %s, utm_source = %s, utm_medium = %s WHERE id = %s')
-                self.cursor.execute(update_data, (name, email, utm_source, utm_medium,g))
+                self.cursor.execute(update_data, (name, email, utm_source, utm_medium,__id__))
                 print('update')
                 self.db.commit()
 
