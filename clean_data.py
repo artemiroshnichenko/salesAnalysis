@@ -5,6 +5,8 @@ import math
 def pohone_check(phone):
     j=0
     phone=str(phone)
+    if phone == 'nan':
+        return 0
     while True:
         try:
             if (phone[j].isdigit()!=True):
@@ -15,7 +17,7 @@ def pohone_check(phone):
         j+=1
     while len(phone)>10:
         phone=phone[2:]
-    return phone
+    return int(phone)
 
 def check_nan(nan):
     if type(nan) != str:
@@ -29,30 +31,37 @@ class Tilda():
         self.data = data
     
     def clean_data (self):
-        __df_phone = []
-        __df_name = []
-        __df_email = []
-        __df_medium = []
-        __df_source = []
+        prev = 1
+        j = 0
         for i in range(len(self.data)):
-            if check_nan(self.data['Phone'][i]) != 'NaN':
-                __df_phone.append(pohone_check(self.data['Phone'][i]))
+            if self.data['phone'][i] == prev:
+                j += 1
+                if type(self.data['utm_source'][i-j]) != str:
+                    if type(self.data['utm_source'][i]) == str: 
+                        self.data['utm_source'][i-j] = self.data['utm_source'][i]
+                        self.data['utm_medium'][i-j] = self.data['utm_medium'][i]
+                self.data = self.data.drop([i])
             else:
-                __df_phone.append(pohone_check(self.data['телефон'][i]))
-            if check_nan(self.data['Name'][i]) != 'NaN':
-                __df_name.append(check_nan(self.data['Name'][i]))
-            else:
-                __df_name.append(check_nan(self.data['имя'][i]))
-            __df_email.append(check_nan(self.data['Email'][i]))
-            __df_source.append(check_nan(self.data['utm_source'][i]))
-            __df_medium.append(check_nan(self.data['utm_medium'][i]))
-        self.data1 = pd.DataFrame({'Phone':[]})
-        self.data1['Name'] = __df_name
-        self.data1['Email'] = __df_email
-        self.data1['utm_source'] = __df_source
-        self.data1['utm_medium'] = __df_medium
-        self.data1['Phone'] = __df_phone
+                prev = self.data['phone'][i]
+                j = 0
+        self.data = self.data.reset_index(drop=True)
 
+    def form_chart(self):
+        self.data = self.data.drop(columns=['Delivery','payment','comment_form','адрес_доставки','оплата',
+                                'Textarea','question','Podval','requisites','uniqa','Адреса_доставки','имя','телефон','доставка',
+                                'Телефон_для_акции_бесплатной_установки','city','mymetroinput','job','brand','Статус оплаты',
+                                'Способ оплаты','Сумма заказа','tranid','formid','formname','paymentsystem','Способ_доставки',
+                                'Вы_живете_в','step2','step3','Сколько_комнат_или_помещений_требует_защиты','Tag','Status ID','web-stie'])
+        pass
+
+    def form_phone_nuber(self):
+        phone = list()
+        for i in range(len(self.data)):
+            if check_nan(self.data['Phone'][i]) == 'NaN':
+                self.data['Phone'][i] = self.data['телефон'][i]
+                self.data['Name'][i] = self.data['телефон'][i]
+            phone.append(pohone_check(self.data['Phone'][i]))
+        self.data['phone'] = phone
     
     
 
