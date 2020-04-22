@@ -1,5 +1,6 @@
 import mysql.connector
 from mysql.connector.errors import Error
+import pandas as pd
 
 class Mysql():
     def __init__(self,source,data):
@@ -18,19 +19,40 @@ class Mysql():
             )
         self.cursor = self.db.cursor()    
     
+    def write2 (self):
+        self.connect()
+        # creating column list for insertion
+        cols = "`,`".join([str(i) for i in self.data.columns.tolist()])
+        # Insert DataFrame recrds one by one.
+        for i,row in self.data.iterrows():
+            
+            sql = "INSERT INTO `tilda` (`" +cols + "`) VALUES (" + "%s,"*(len(row)-1) + "%s)"
+            
+            try:
+                self.cursor.execute(sql, tuple(row))
+            except mysql.connector.errors.IntegrityError as err:
+                if err.errno == 1062: 
+                    pass
+                    #self.update(self.data_load[index])
+                else:
+                    print('Something wrong:', err)
+            # the connection is not autocommitted by default, so we must commit to save our changes
+            self.db.commit()
+        pass
+
     def form_data(self):
-        records = self.data.to_records(index=False)
+        records = data.to_records(index=False)
         self.data_load = list(records)
 
     def insert(self, index):
         if self.source == 'tilda':
-            add_data = ('INSERT INTO tilda(phone, name, email, utm_source, utm_medium) VALUES (%s, %s, %s, %s, %s)')
+            add_data = ('INSERT INTO tilda(id, phone, name, email, utm_source, utm_medium) VALUES (%s,%s, %s, %s, %s, %s)')
         try:
             self.cursor.execute(add_data, tuple(self.data_load[index]))
         except mysql.connector.errors.IntegrityError as err:
             if err.errno == 1062: 
                 print(self.data_load[index])
-                self.update(self.data_load[index])
+                #self.update(self.data_load[index])
             else:
                 print('Something wrong:', err)
         pass
@@ -68,7 +90,9 @@ class Mysql():
         self.connect()
         self.form_data()
         for i in range(len(self.data_load)):
+            print(self.data_load)
             self.insert(i)
+            
         self.db.commit()
         self.cursor.close()
         self.db.close()

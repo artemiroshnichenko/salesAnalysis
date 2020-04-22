@@ -2,7 +2,7 @@ import pandas as pd
 import math
 
 #remuve all unnecessary characters
-def pohone_check(phone):
+def pohone_check(phone, typ):
     j=0
     phone=str(phone)
     if phone == 'nan':
@@ -17,7 +17,10 @@ def pohone_check(phone):
         j+=1
     while len(phone)>10:
         phone=phone[2:]
-    return int(phone)
+    if typ == 'int':
+        return int(phone)
+    elif typ == 'str':
+        return phone
 
 def check_nan(nan):
     if type(nan) != str:
@@ -45,24 +48,41 @@ class Tilda():
                 prev = self.data['phone'][i]
                 j = 0
         self.data = self.data.reset_index(drop=True)
-
-    def form_chart(self):
-        self.data = self.data.drop(columns=['Delivery','payment','comment_form','адрес_доставки','оплата',
-                                'Textarea','question','Podval','requisites','uniqa','Адреса_доставки','имя','телефон','доставка',
-                                'Телефон_для_акции_бесплатной_установки','city','mymetroinput','job','brand','Статус оплаты',
-                                'Способ оплаты','Сумма заказа','tranid','formid','formname','paymentsystem','Способ_доставки',
-                                'Вы_живете_в','step2','step3','Сколько_комнат_или_помещений_требует_защиты','Tag','Status ID','web-stie'])
-        pass
+        self.data_to_load()
 
     def form_phone_nuber(self):
-        phone = list()
+        __phone = list()
+        __df_phone = []
+        __df_name = []
+        __df_email = []
+        __df_medium = []
+        __df_source = []
         for i in range(len(self.data)):
-            if check_nan(self.data['Phone'][i]) == 'NaN':
-                self.data['Phone'][i] = self.data['телефон'][i]
-                self.data['Name'][i] = self.data['телефон'][i]
-            phone.append(pohone_check(self.data['Phone'][i]))
-        self.data['phone'] = phone
-    
+            if check_nan(self.data['Phone'][i]) != 'NaN':
+                __df_phone.append(pohone_check(self.data['Phone'][i],'str'))
+            else:
+                __df_phone.append(pohone_check(self.data['телефон'][i],'str'))
+            if check_nan(self.data['Name'][i]) != 'NaN':
+                __df_name.append(check_nan(self.data['Name'][i]))
+            else:
+                __df_name.append(check_nan(self.data['имя'][i]))
+            __df_email.append(check_nan(self.data['Email'][i]))
+            __df_source.append(check_nan(self.data['utm_source'][i]))
+            __df_medium.append(check_nan(self.data['utm_medium'][i]))
+            __phone.append(pohone_check(self.data['Phone'][i],'int'))
+        self.data['phone'] = __phone
+        self.data['Name'] = __df_name
+        self.data['Email'] = __df_email
+        self.data['utm_source'] = __df_source
+        self.data['utm_medium'] = __df_medium
+        self.data['Phone'] = __df_phone
     
 
-
+    def data_to_load(self):
+        self.data_load = pd.DataFrame()
+        self.data_load['id'] = self.data['phone']
+        self.data_load['phone'] = self.data['Phone']
+        self.data_load['name'] = self.data['Name']
+        self.data_load['email'] = self.data['Email']
+        self.data_load['utm_source'] = self.data['utm_source']
+        self.data_load['utm_medium'] = self.data['utm_medium']
