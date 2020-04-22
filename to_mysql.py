@@ -32,57 +32,46 @@ class Mysql():
                 self.cursor.execute(sql, tuple(row))
             except mysql.connector.errors.IntegrityError as err:
                 if err.errno == 1062: 
+                    
+                    if i < 10:
+                        self.update(self.data.iloc[i])
                     pass
-                    #self.update(self.data_load[index])
                 else:
                     print('Something wrong:', err)
             # the connection is not autocommitted by default, so we must commit to save our changes
             self.db.commit()
         pass
 
-    def form_data(self):
-        records = data.to_records(index=False)
-        self.data_load = list(records)
-
-    def insert(self, index):
-        if self.source == 'tilda':
-            add_data = ('INSERT INTO tilda(id, phone, name, email, utm_source, utm_medium) VALUES (%s,%s, %s, %s, %s, %s)')
-        try:
-            self.cursor.execute(add_data, tuple(self.data_load[index]))
-        except mysql.connector.errors.IntegrityError as err:
-            if err.errno == 1062: 
-                print(self.data_load[index])
-                #self.update(self.data_load[index])
-            else:
-                print('Something wrong:', err)
-        pass
-
     def update(self, key):
         if 1:
             __flag = False
-            print(key)
+            #key[0] = int(key[0])
+            print(key['id'])
+            g = int(key['id'])
             read_data = (
-                        'SELECT name, email, utm_source, utm_medium FROM sales.tilda WHERE phone = %s' 
+                        'SELECT name, phone, email, utm_source, utm_medium FROM sales.tilda WHERE id = %s' 
                         )
-            self.cursor.execute(read_data, (key[0],))
-            for (name, email, utm_source, utm_medium) in self.cursor:
-                print(key[0], name, email)
-            if name != key[1] and key[1] != 'NaN':
-                name = key[1]
+            self.cursor.execute(read_data, (g,))
+            for (name, phone, email, utm_source, utm_medium) in self.cursor:
+                print(g, name, phone, email, utm_source, utm_medium)
+            if name != key['name'] and key['name'] != 'NaN':
+                name = key['name']
                 __flag = True
-            if email != key[2] and key[2] != 'NaN':
-                email = key[2]
+            if email != key['email'] and key['email'] != 'NaN':
+                email = key['email']
                 __flag = True
-            if utm_source != key[3] and key[3] != 'NaN':
-                utm_source = key[3]
+            if utm_source != key['utm_source'] and key['utm_source'] != 'NaN':
+                utm_source = key['utm_source']
                 __flag = True
-            if utm_medium != key[4] and key[4] != 'NaN':
-                utm_medium = key[4]
+            if utm_medium != key['utm_medium'] and key['utm_medium'] != 'NaN':
+                utm_medium = key['utm_medium']
                 __flag = True
             if __flag == True:
-                update_data = ('UPDATE sales.tilda SET name = %s, email = %s, utm_source = %s, utm_medium = %s')
-                self.cursor.execute(update_data, (name, email, utm_source, utm_medium))
+                print(g, name, phone, email, utm_source, utm_medium)
+                update_data = ('UPDATE sales.tilda SET name = %s, email = %s, utm_source = %s, utm_medium = %s WHERE id = %s')
+                self.cursor.execute(update_data, (name, email, utm_source, utm_medium,g))
                 print('update')
+                self.db.commit()
 
 
 
