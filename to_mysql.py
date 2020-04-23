@@ -19,7 +19,7 @@ class Mysql():
             )
         self.cursor = self.db.cursor()    
     
-    def write2 (self):
+    def write (self):
         self.connect()
         # creating column list for insertion
         cols = "`,`".join([str(i) for i in self.data.columns.tolist()])
@@ -37,7 +37,9 @@ class Mysql():
                     print('Something wrong:', err)
             # the connection is not autocommitted by default, so we must commit to save our changes
             self.db.commit()
-        pass
+        self.cursor.close()
+        self.db.close()
+        
 
     def update(self, key):
         if 1:
@@ -66,19 +68,6 @@ class Mysql():
                 self.cursor.execute(update_data, (name, email, utm_source, utm_medium,__id__))
                 print('update')
                 self.db.commit()
-
-
-
-    def write(self):
-        self.connect()
-        self.form_data()
-        for i in range(len(self.data_load)):
-            print(self.data_load)
-            self.insert(i)
-            
-        self.db.commit()
-        self.cursor.close()
-        self.db.close()
           
 
     def read(self):
