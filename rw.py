@@ -14,5 +14,8 @@ def w_json(data, filename):
 def r_csv(FILE_LOCATION,separate,head): 
     return pd.read_csv(FILE_LOCATION, header=head, sep=separate, index_col=False)
 
+def r_txt(FILE_LOCATION,separate,head): 
+    return pd.read_csv(FILE_LOCATION, header=None, sep=separate, index_col=False)
+
 def w_csv(FILE_LOCATION,df):
     df.to_csv (FILE_LOCATION, index = None, header=True)

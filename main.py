@@ -49,8 +49,19 @@ def popup():
         a.write()
         print('ok')
 
+def client():
+    data = rw.r_txt('data/ff.txt', 'zzzz', 0)
+    data = data.drop([0,1,2,3,4,5]).reset_index(drop=True)
+    for i in range(len(data)):
+        data[0][i] = data[0][i].split('\t')
+        data[0][i][0] = data[0][i][0].split(',')
+        data[0][i][2] = data[0][i][2].replace('\xa0','').replace(',','.')
+        data[0][i][1] = data[0][i][1].replace('\xa0','').replace(',','.')
+    print(data)
+    
+
 
 if __name__ == '__main__':
     import timeit
-    load = 'popup'
+    load = 'client'
     print(timeit.timeit(load+'()', setup="from __main__ import " + load,number=1))
