@@ -36,6 +36,8 @@ def rem_phone(phone):
         pass
     elif  'номер скрыт оператором' in phone.lower():
         phone =''
+    elif '801' in phone:
+        phone = ''
     elif '901' in phone:
         phone = ''
     elif '902' in phone:
@@ -47,6 +49,8 @@ def rem_phone(phone):
     elif '905' in phone:
         phone = ''
     elif '906' in phone:
+        phone = ''   
+    elif '907' in phone:
         phone = ''   
     elif '0442994990' in phone:
         phone = '' 
@@ -112,19 +116,33 @@ class Data():
         self.data_to_load()
 
     def calls_form(self):
+        __phone = list()
+        __df_phone = []
+        __df_name = []
+        __df_email = []
+        __df_medium = []
+        __df_source = []
+        self.data['Date'] = self.data['Дата']
         for i in range(len(self.data)):
             if rem_phone(self.data['Номер звонящего'][i]) == '':
-                self.data.drop([i])
+                self.data = self.data.drop([i])
             else:
-                self.data['Phone'][i] = phone_check(self.data['Номер звонящего'][i],'str')
-                self.data['phone'][i] = phone_check(self.data['Номер звонящего'][i],'int')
-                self.data['Email'][i] = 'NaN'
-                self.data['Name'][i] = 'NaN'
-                self.data['utm_source'][i] = check_nan(self.data['utm_source'][i])
-                self.data['utm_medium'][i] = check_nan(self.data['utm_medium'][i])
-        pass
+                __df_phone.append(phone_check(self.data['Номер звонящего'][i],'str'))
+                __phone.append(phone_check(self.data['Номер звонящего'][i],'int'))
+                __df_email.append('NaN')
+                __df_name.append('NaN') 
+                __df_source.append(check_nan(self.data['utm_source'][i]))
+                __df_medium.append(check_nan(self.data['utm_medium'][i]))
+        self.data['phone'] = __phone
+        self.data['Name'] = __df_name
+        self.data['Email'] = __df_email
+        self.data['utm_source'] = __df_source
+        self.data['utm_medium'] = __df_medium
+        self.data['Phone'] = __df_phone
+        self.data = self.data.reset_index(drop=True)
+        
 
-    def form_phone_nuber(self):
+    def tilda_form(self):
         __phone = list()
         __df_phone = []
         __df_name = []
@@ -145,14 +163,12 @@ class Data():
             __df_source.append(check_nan(self.data['utm_source'][i]))
             __df_medium.append(check_nan(self.data['utm_medium'][i]))
             __phone.append(phone_check(self.data['Phone'][i],'int'))
-            __date.append(check_nan(self.data['Date'][i]))
         self.data['phone'] = __phone
         self.data['Name'] = __df_name
         self.data['Email'] = __df_email
         self.data['utm_source'] = __df_source
         self.data['utm_medium'] = __df_medium
         self.data['Phone'] = __df_phone
-        self.data['Date'] = __date
     
 
     def data_to_load(self):

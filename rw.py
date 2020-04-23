@@ -12,7 +12,7 @@ def w_json(data, filename):
         json.dump(data, f, indent=4)
         
 def r_csv(FILE_LOCATION,separate,head): 
-    return pd.read_csv(FILE_LOCATION, header=head, sep=separate)
+    return pd.read_csv(FILE_LOCATION, header=head, sep=separate, index_col=False)
 
 def w_csv(FILE_LOCATION,df):
     df.to_csv (FILE_LOCATION, index = None, header=True)
