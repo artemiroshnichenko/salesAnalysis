@@ -13,9 +13,9 @@ __pycache__/
 
 #Data block 
 
-data/
-data
-*.csv
+!data/
+data/*
+#*.csv
 
 # Distribution / packaging
 .Python
