@@ -19,7 +19,7 @@ class Mysql():
             passwd = con['passwd'],
             database = self.database
             )
-        self.cursor = self.db.cursor()    
+        self.cursor = self.db.cursor()
     
     def write (self):
         self._connect()
