@@ -25,6 +25,18 @@ def calls():
     a.write()
     print('ok')
 
+def order():
+    data = cd.Data(rw.r_csv('data/order.csv', ',', 0))
+    data.order_form()
+    data.data = data.data.sort_values(by=['phone']).reset_index(drop=True)
+    data.remove_duplicates()
+    data.data_to_load()
+    print(data.data_load)
+    a=to_mysql.Mysql('order',data.data_load)
+    a.write()
+    print('ok')
+
 if __name__ == '__main__':
     import timeit
-    print(timeit.timeit("calls()", setup="from __main__ import calls",number=1))
+    load = 'order'
+    print(timeit.timeit(load+'()', setup="from __main__ import " + load,number=1))

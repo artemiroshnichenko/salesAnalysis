@@ -170,6 +170,32 @@ class Data():
         self.data['utm_medium'] = __df_medium
         self.data['Phone'] = __df_phone
     
+    def order_form(self):
+        __phone = list()
+        __df_phone = []
+        __df_name = []
+        __df_email = []
+        __df_medium = []
+        __df_source = []
+        self.data['Date'] = self.data['Order Date']
+        for i in range(len(self.data)):
+            __df_phone.append(phone_check(self.data['Phone (Billing)'][i],'str'))
+            __phone.append(phone_check(self.data['Phone (Billing)'][i],'int'))
+            __df_email.append(check_nan(self.data['Email (Billing)'][i]))
+            __df_name.append(check_nan(self.data['First Name (Billing)'][i]))
+            if self.data['Custom Fields'][i].find('utm_Field') != -1:
+                __df_source.append(self.data['Custom Fields'][i][self.data['Custom Fields'][i].find('utm_Field'):])
+            else:
+                __df_source.append('NaN')
+            __df_medium.append('NaN')
+        self.data['phone'] = __phone
+        self.data['Name'] = __df_name
+        self.data['Email'] = __df_email
+        self.data['utm_source'] = __df_source
+        self.data['utm_medium'] = __df_medium
+        self.data['Phone'] = __df_phone
+        self.data = self.data.reset_index(drop=True)
+        
 
     def data_to_load(self):
         self.data_load = pd.DataFrame()

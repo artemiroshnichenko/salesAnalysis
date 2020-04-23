@@ -50,7 +50,7 @@ class Mysql():
             __flag__ = False
             __id__ = int(key['id'])
             read_data = (
-                        'SELECT name, phone, email, utm_source, utm_medium FROM sales.tilda WHERE id = %s' 
+                        'SELECT name, phone, email, utm_source, utm_medium FROM ' + self.database + '.' + self.source + ' WHERE id = %s' 
                         )
             self.cursor.execute(read_data, (__id__,))
             for (name, phone, email, utm_source, utm_medium) in self.cursor:
