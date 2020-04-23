@@ -149,7 +149,6 @@ class Data():
         __df_email = []
         __df_medium = []
         __df_source = []
-        __date = []
         for i in range(len(self.data)):
             if check_nan(self.data['Phone'][i]) != 'NaN':
                 __df_phone.append(phone_check(self.data['Phone'][i],'str'))
@@ -196,6 +195,32 @@ class Data():
         self.data['Phone'] = __df_phone
         self.data = self.data.reset_index(drop=True)
         
+    def popup_form(self, lang):
+        __phone = list()
+        __df_phone = []
+        __df_name = []
+        __df_email = []
+        __df_medium = []
+        __df_source = []
+        __date = []
+        if lang == 'data/popup_ru.csv':
+            col = 'tel-853'
+        else:
+            col = 'tel-749'
+        for i in range(len(self.data)):
+            __phone.append(phone_check(self.data[col][i],'int'))
+            __df_phone.append(phone_check(self.data[col][i],'str'))
+            __df_email.append('NaN')
+            __df_source.append(check_nan(self.data['url'][i]))
+            __df_medium.append('NaN')
+            __df_name.append('NaN')
+        self.data['phone'] = __phone
+        self.data['Name'] = __df_name
+        self.data['Email'] = __df_email
+        self.data['utm_source'] = __df_source
+        self.data['utm_medium'] = __df_medium
+        self.data['Phone'] = __df_phone
+        self.data['Date'] = self.data['Дата']
 
     def data_to_load(self):
         self.data_load = pd.DataFrame()
