@@ -26,11 +26,9 @@ class Mysql():
         # creating column list for insertion
         cols = '`,`'.join([str(i) for i in self.data.columns.tolist()])
         # Insert DataFrame recrds one by one.
-        print(cols)
         for i,row in self.data.iterrows():
             
             sql = 'INSERT INTO `'+ self.source +'` (`' +cols + '`) VALUES (' + '%s,'*(len(row)-1) + '%s)'
-            #print(sql)
             try:
                 self.cursor.execute(sql, tuple(row))
             except mysql.connector.errors.IntegrityError as err:
@@ -40,7 +38,6 @@ class Mysql():
                     print('Something wrong:', err)
             # the connection is not autocommitted by default, so we must commit to save our changes
             self.db.commit()
-        print(sql)
         self.cursor.close()
         self.db.close()
         
