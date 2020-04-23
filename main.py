@@ -5,14 +5,14 @@ import to_mysql
 import timeit
 
 def test():
-    tilda = rw.r_csv('./tilda.csv', ';', 0)
+    tilda = rw.r_csv('data/tilda.csv', ';', 0)
     tilda = cd.Tilda(tilda)
     tilda.form_phone_nuber()
     tilda.data = tilda.data.sort_values(by=['phone']).reset_index(drop=True)
     tilda.clean_data()
     #print(tilda.data_load)
     a=to_mysql.Mysql('tilda',tilda.data_load)
-    a.write2()
+    a.write()
     print('ok')
 
 if __name__ == '__main__':

@@ -17,6 +17,10 @@ __pycache__/
 data/*
 #*.csv
 
+#Connection hide
+
+MySQL/connect.py
+
 # Distribution / packaging
 .Python
 build/
