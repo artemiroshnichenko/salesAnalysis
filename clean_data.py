@@ -222,6 +222,55 @@ class Data():
         self.data['Phone'] = __df_phone
         self.data['Date'] = self.data['Дата']
 
+    def client_form(self):
+        __phone = list()
+        __df_phone = []
+        __df_name = []
+        __df_email = []
+        __df_medium = []
+        __df_source = []
+        __revenue = []
+        __profit = []
+        __date = []
+        for i in range(len(self.data)):
+            try:
+                __phone.append(phone_check(self.data[0][i][0][1],'int'))
+            except ValueError:
+                try:
+                    __phone.append(phone_check(self.data[0][i][0][0].split(' ')[-1:],'int'))
+                except ValueError:
+                    print('err no phone num')
+                    __phone.append(i)
+            __df_phone.append(phone_check(self.data[0][i][0][1],'str'))
+            __df_email.append('NaN')
+            __df_source.append('NaN')
+            __df_medium.append('NaN')
+            __df_name.append(self.data[0][i][0][0])
+            __revenue.append(self.data[0][i][1])
+            __profit.append(self.data[0][i][2])
+            __date.append('NaN')
+        self.data['phone'] = __phone
+        self.data['Name'] = __df_name
+        self.data['Email'] = __df_email
+        self.data['utm_source'] = __df_source
+        self.data['utm_medium'] = __df_medium
+        self.data['Phone'] = __df_phone
+        self.data['revenue'] = __revenue
+        self.data['profit'] = __profit
+        self.data['Date'] = __date
+
+    def data_to_load_c(self):
+        self.data_load = pd.DataFrame()
+        self.data_load['id'] = self.data['phone']
+        self.data_load['phone'] = self.data['Phone']
+        self.data_load['name'] = self.data['Name']
+        self.data_load['email'] = self.data['Email']
+        self.data_load['utm_source'] = self.data['utm_source']
+        self.data_load['utm_medium'] = self.data['utm_medium']
+        self.data_load['date'] = self.data['Date']
+        self.data_load['revenue'] = self.data['revenue']
+        self.data_load['profit'] = self.data['profit']
+
     def data_to_load(self):
         self.data_load = pd.DataFrame()
         self.data_load['id'] = self.data['phone']

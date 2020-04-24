@@ -55,10 +55,14 @@ def client():
     for i in range(len(data)):
         data[0][i] = data[0][i].split('\t')
         data[0][i][0] = data[0][i][0].split(',')
-        data[0][i][2] = data[0][i][2].replace('\xa0','').replace(',','.')
-        data[0][i][1] = data[0][i][1].replace('\xa0','').replace(',','.')
-    print(data)
-    
+        data[0][i][2] = data[0][i][1].replace('\xa0','').replace(',','.') # возможна ошибка если в таблице нету одного из значений в столбике
+        data[0][i][1] = data[0][i][2].replace('\xa0','').replace(',','.') 
+    data = cd.Data(data)
+    data.client_form()
+    data.data_to_load_c()
+    a=to_mysql.Mysql('client',data.data_load)
+    a.write()
+    print('ok')  
 
 
 if __name__ == '__main__':
