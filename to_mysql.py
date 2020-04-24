@@ -60,6 +60,7 @@ class Mysql():
                 __flag__ = True
             if utm_source != key['utm_source'] and key['utm_source'] != 'NaN':
                 utm_source = key['utm_source']
+                #print('change utm ', utm_source, key['utm_source'])
                 __flag__ = True
             if utm_medium != key['utm_medium'] and key['utm_medium'] != 'NaN':
                 utm_medium = key['utm_medium']
@@ -67,13 +68,30 @@ class Mysql():
             if __flag__ == True:
                 update_data = ('UPDATE sales.tilda SET name = %s, email = %s, utm_source = %s, utm_medium = %s WHERE id = %s')
                 self.cursor.execute(update_data, (name, email, utm_source, utm_medium,__id__))
-                print('update')
+                #print('update')
                 self.db.commit()
           
 
     def read(self):
-        pass
-
+        self._connect()
+        __utm_source = []
+        __utm_medium = []
+        for i in range(len(self.data)):
+            _flag_ = True
+            read_data = ('SELECT utm_source, utm_medium FROM ' + self.database + '.' + self.source + ' WHERE id = %s' )
+            self.cursor.execute(read_data, (str(self.data['id'][i]),))
+            for (utm_source, utm_medium) in self.cursor:
+                __utm_source.append(utm_source)
+                __utm_medium.append(utm_medium)
+                _flag_ = False
+            if _flag_:
+                __utm_source.append('Not info')
+                __utm_medium.append('Not info')
+        self.data['utm_source'] = __utm_source
+        self.data['utm_medium'] = __utm_medium
+        self.cursor.close()
+        self.db.close()
+        
     if __name__ == '__main__':
         Mysql._connect()
         pass

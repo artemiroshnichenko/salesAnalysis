@@ -252,8 +252,8 @@ class Data():
         self.data['phone'] = __phone
         self.data['Name'] = __df_name
         self.data['Email'] = __df_email
-        self.data['utm_source'] = __df_source
-        self.data['utm_medium'] = __df_medium
+        #self.data['utm_source'] = __df_source
+        #self.data['utm_medium'] = __df_medium
         self.data['Phone'] = __df_phone
         self.data['revenue'] = __revenue
         self.data['profit'] = __profit
@@ -265,8 +265,8 @@ class Data():
         self.data_load['phone'] = self.data['Phone']
         self.data_load['name'] = self.data['Name']
         self.data_load['email'] = self.data['Email']
-        self.data_load['utm_source'] = self.data['utm_source']
-        self.data_load['utm_medium'] = self.data['utm_medium']
+        #self.data_load['utm_source'] = self.data['utm_source']
+        #self.data_load['utm_medium'] = self.data['utm_medium']
         self.data_load['date'] = self.data['Date']
         self.data_load['revenue'] = self.data['revenue']
         self.data_load['profit'] = self.data['profit']

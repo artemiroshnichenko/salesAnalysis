@@ -10,7 +10,7 @@ def tilda():
     data.remove_duplicates()
     #print(data.data)
     #print(tilda.data_load)
-    a=to_mysql.Mysql('tilda',data.data_load)
+    a=to_mysql.Mysql('lead',data.data_load)
     a.write()
     print('ok')
 
@@ -20,8 +20,8 @@ def calls():
     data.data = data.data.sort_values(by=['phone']).reset_index(drop=True)
     data.remove_duplicates()
     data.data_to_load()
-    print(data.data_load)
-    a=to_mysql.Mysql('calls',data.data_load)
+    #print(data.data_load)
+    a=to_mysql.Mysql('lead',data.data_load)
     a.write()
     print('ok')
 
@@ -31,8 +31,8 @@ def order():
     data.data = data.data.sort_values(by=['phone']).reset_index(drop=True)
     data.remove_duplicates()
     data.data_to_load()
-    print(data.data_load)
-    a=to_mysql.Mysql('order',data.data_load)
+    #print(data.data_load)
+    a=to_mysql.Mysql('lead',data.data_load)
     a.write()
     print('ok')
 
@@ -44,13 +44,14 @@ def popup():
         data.data = data.data.sort_values(by=['phone']).reset_index(drop=True)
         data.remove_duplicates()
         data.data_to_load()
-        print(data.data_load)
-        a=to_mysql.Mysql('popup',data.data_load)
+        #print(data.data_load)
+        a=to_mysql.Mysql('lead',data.data_load)
         a.write()
         print('ok')
 
 def client():
     data = rw.r_txt('data/ff.txt', 'zzzz', 0)
+    print(data)
     data = data.drop([0,1,2,3,4,5]).reset_index(drop=True)
     for i in range(len(data)):
         data[0][i] = data[0][i].split('\t')
@@ -60,12 +61,20 @@ def client():
     data = cd.Data(data)
     data.client_form()
     data.data_to_load_c()
-    a=to_mysql.Mysql('client',data.data_load)
-    a.write()
-    print('ok')  
+    return data.data_load
 
+def main():
+    order()
+    popup()
+    calls()
+    tilda()
+    data = client()
+    sql = to_mysql.Mysql('lead', data)
+    sql.read()
+    print(sql.data)
+    rw.w_csv('data/res.csv',sql.data)
 
 if __name__ == '__main__':
     import timeit
-    load = 'client'
+    load = 'main'
     print(timeit.timeit(load+'()', setup="from __main__ import " + load,number=1))
