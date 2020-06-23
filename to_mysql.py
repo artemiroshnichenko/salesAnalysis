@@ -1,7 +1,7 @@
 import mysql.connector
 from mysql.connector.errors import Error
 import pandas as pd
-from MySQL import connect 
+from MySQL import connect
 
 class Mysql():
     def __init__(self,source,data):
@@ -26,6 +26,7 @@ class Mysql():
         # creating column list for insertion
         cols = '`,`'.join([str(i) for i in self.data.columns.tolist()])
         # Insert DataFrame recrds one by one.
+        print(cols)
         for i,row in self.data.iterrows():
             
             sql = 'INSERT INTO `'+ self.source +'` (`' +cols + '`) VALUES (' + '%s,'*(len(row)-1) + '%s)'
@@ -93,6 +94,6 @@ class Mysql():
         self.db.close()
         
     if __name__ == '__main__':
-        Mysql._connect()
+        print(connect.connect())
         pass
         

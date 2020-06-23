@@ -1,11 +1,14 @@
 import pandas as pd
 import math
+import re
 
 #remuve all unnecessary characters
 def phone_check(phone, typ):
     j=0
     phone=str(phone)
     if phone == 'nan':
+        return 0
+    elif phone == '':
         return 0
     while True:
         try:
@@ -18,7 +21,10 @@ def phone_check(phone, typ):
     while len(phone)>10:
         phone=phone[2:]
     if typ == 'int':
-        return int(phone)
+        if phone == '':
+            return 0
+        else:
+            return int(phone)
     elif typ == 'str':
         return phone
 
@@ -94,6 +100,12 @@ def rem_phone(phone):
         phone = ''
     return phone
 
+def parse(mark, url):
+    result = re.search(r'utm_{}=(.+?)(&|$)'.format(mark), url)
+    if result:
+        return result.group(1)
+    return None
+
 class Data():
     def __init__(self, data):
         self.data = data
@@ -150,23 +162,23 @@ class Data():
         __df_medium = []
         __df_source = []
         for i in range(len(self.data)):
-            if check_nan(self.data['Phone'][i]) != 'NaN':
-                __df_phone.append(phone_check(self.data['Phone'][i],'str'))
+            if check_nan(self.data['phone'][i]) != 'NaN':
+                __df_phone.append(phone_check(self.data['phone'][i],'str'))
             else:
                 __df_phone.append(phone_check(self.data['телефон'][i],'str'))
-            if check_nan(self.data['Name'][i]) != 'NaN':
-                __df_name.append(check_nan(self.data['Name'][i]))
+            if check_nan(self.data['name'][i]) != 'NaN':
+                __df_name.append(check_nan(self.data['name'][i]))
             else:
                 __df_name.append(check_nan(self.data['имя'][i]))
-            __df_email.append(check_nan(self.data['Email'][i]))
-            __df_source.append(check_nan(self.data['utm_source'][i]))
-            __df_medium.append(check_nan(self.data['utm_medium'][i]))
-            __phone.append(phone_check(self.data['Phone'][i],'int'))
+            __df_email.append(check_nan(self.data['email'][i]))
+            #__df_source.append(check_nan(self.data['utm_source'][i]))
+            #__df_medium.append(check_nan(self.data['utm_medium'][i]))
+            __phone.append(int(__df_phone[i]))
         self.data['phone'] = __phone
-        self.data['Name'] = __df_name
-        self.data['Email'] = __df_email
-        self.data['utm_source'] = __df_source
-        self.data['utm_medium'] = __df_medium
+        self.data['name'] = __df_name
+        self.data['email'] = __df_email
+        #self.data['utm_source'] = __df_source
+        #self.data['utm_medium'] = __df_medium
         self.data['Phone'] = __df_phone
     
     def order_form(self):
@@ -195,69 +207,62 @@ class Data():
         self.data['Phone'] = __df_phone
         self.data = self.data.reset_index(drop=True)
         
-    def popup_form(self, lang):
-        __phone = list()
+    def popup_form(self):
+        self.data_load = pd.DataFrame()
+        __phone = []
         __df_phone = []
         __df_name = []
         __df_email = []
         __df_medium = []
         __df_source = []
         __date = []
-        if lang == 'data/popup_ru.csv':
-            col = 'tel-853'
-        else:
-            col = 'tel-749'
         for i in range(len(self.data)):
-            __phone.append(phone_check(self.data[col][i],'int'))
-            __df_phone.append(phone_check(self.data[col][i],'str'))
+            __phone.append(phone_check(self.data['phone'][i],'int'))
+            __df_phone.append(phone_check(self.data['phone'][i],'str'))
             __df_email.append('NaN')
-            __df_source.append(check_nan(self.data['url'][i]))
+            __df_source.append(check_nan(self.data['parameter-string-field'][i]))
             __df_medium.append('NaN')
             __df_name.append('NaN')
-        self.data['phone'] = __phone
-        self.data['Name'] = __df_name
-        self.data['Email'] = __df_email
-        self.data['utm_source'] = __df_source
-        self.data['utm_medium'] = __df_medium
-        self.data['Phone'] = __df_phone
-        self.data['Date'] = self.data['Дата']
+        self.data_load['id'] = __phone
+        self.data_load['name'] = __df_name
+        self.data_load['email'] = __df_email
+        self.data_load['utm_source'] = __df_source
+        self.data_load['utm_medium'] = __df_medium
+        self.data_load['phone'] = __df_phone
+        self.data_load['date'] = self.data['date']
 
     def client_form(self):
-        __phone = list()
-        __df_phone = []
-        __df_name = []
-        __df_email = []
-        __df_medium = []
-        __df_source = []
+        __id = []
+        __client = []
+        __phone = []
+        __price = []
         __revenue = []
-        __profit = []
-        __date = []
-        for i in range(len(self.data)):
+        for i in range(len(self.data)-1):
+            var = self.data[0][i].split('\t')
+            name = var[0].split(',')[0]
             try:
-                __phone.append(phone_check(self.data[0][i][0][1],'int'))
-            except ValueError:
-                try:
-                    __phone.append(phone_check(self.data[0][i][0][0].split(' ')[-1:],'int'))
-                except ValueError:
-                    print('err no phone num')
-                    __phone.append(i)
-            __df_phone.append(phone_check(self.data[0][i][0][1],'str'))
-            __df_email.append('NaN')
-            __df_source.append('NaN')
-            __df_medium.append('NaN')
-            __df_name.append(self.data[0][i][0][0])
-            __revenue.append(self.data[0][i][1])
-            __profit.append(self.data[0][i][2])
-            __date.append('NaN')
-        self.data['phone'] = __phone
-        self.data['Name'] = __df_name
-        self.data['Email'] = __df_email
-        #self.data['utm_source'] = __df_source
-        #self.data['utm_medium'] = __df_medium
-        self.data['Phone'] = __df_phone
-        self.data['revenue'] = __revenue
-        self.data['profit'] = __profit
-        self.data['Date'] = __date
+                num = var[0].split(',')[1]
+            except IndexError:
+                num = name.split(' ')[-1]
+            if num == '':
+                num = name.split(' ')[-1]
+            __client.append(name)
+            __id.append(phone_check(num,'int'))
+            __phone.append(phone_check(num,'str'))
+            try:
+                __price.append(var[1].replace('\xa0','').replace(',','.'))
+            except IndexError:
+                __price.append(0)
+            try:
+                __revenue.append(var[2].replace('\xa0','').replace(',','.'))
+            except IndexError:
+                __revenue.append(0)
+        self.data_load = pd.DataFrame()
+        self.data_load['id'] = __id
+        self.data_load['client'] = __client
+        self.data_load['phone'] = __phone
+        self.data_load['price'] = __price
+        self.data_load['revenue'] = __revenue
 
     def data_to_load_c(self):
         self.data_load = pd.DataFrame()
@@ -280,3 +285,21 @@ class Data():
         self.data_load['utm_source'] = self.data['utm_source']
         self.data_load['utm_medium'] = self.data['utm_medium']
         self.data_load['date'] = self.data['Date']
+
+    def tilda_load(self):
+        self.data_load = pd.DataFrame()
+        self.data_load['id'] = self.data['phone']
+        self.data_load['phone'] = self.data['Phone']
+        self.data_load['name'] = self.data['name']
+        self.data_load['email'] = self.data['email']
+        __df_medium = []
+        __df_source = []
+        __df_campaign = []
+        for i in range(len(self.data)):
+            __df_source.append(parse('source',str(self.data['referer'][i])))
+            __df_medium.append(parse('medium',str(self.data['referer'][i])))
+            __df_campaign.append(parse('campaign',str(self.data['referer'][i])))
+        self.data_load['utm_source'] = __df_source
+        self.data_load['utm_medium'] = __df_medium
+        self.data_load['utm_campaign'] = __df_campaign
+        self.data_load['date'] = self.data['created']
