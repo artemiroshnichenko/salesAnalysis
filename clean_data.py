@@ -152,34 +152,6 @@ class Data():
         self.data['utm_medium'] = __df_medium
         self.data['Phone'] = __df_phone
         self.data = self.data.reset_index(drop=True)
-        
-
-    def tilda_form(self):
-        __phone = list()
-        __df_phone = []
-        __df_name = []
-        __df_email = []
-        __df_medium = []
-        __df_source = []
-        for i in range(len(self.data)):
-            if check_nan(self.data['phone'][i]) != 'NaN':
-                __df_phone.append(phone_check(self.data['phone'][i],'str'))
-            else:
-                __df_phone.append(phone_check(self.data['телефон'][i],'str'))
-            if check_nan(self.data['name'][i]) != 'NaN':
-                __df_name.append(check_nan(self.data['name'][i]))
-            else:
-                __df_name.append(check_nan(self.data['имя'][i]))
-            __df_email.append(check_nan(self.data['email'][i]))
-            #__df_source.append(check_nan(self.data['utm_source'][i]))
-            #__df_medium.append(check_nan(self.data['utm_medium'][i]))
-            __phone.append(int(__df_phone[i]))
-        self.data['phone'] = __phone
-        self.data['name'] = __df_name
-        self.data['email'] = __df_email
-        #self.data['utm_source'] = __df_source
-        #self.data['utm_medium'] = __df_medium
-        self.data['Phone'] = __df_phone
     
     def order_form(self):
         __phone = list()
@@ -286,20 +258,37 @@ class Data():
         self.data_load['utm_medium'] = self.data['utm_medium']
         self.data_load['date'] = self.data['Date']
 
-    def tilda_load(self):
+
+class Tilda():
+    def __init__(self, data):
+        self.data = data
+        
+    def form(self):
         self.data_load = pd.DataFrame()
-        self.data_load['id'] = self.data['phone']
-        self.data_load['phone'] = self.data['Phone']
-        self.data_load['name'] = self.data['name']
-        self.data_load['email'] = self.data['email']
+        __phone = []
+        __df_phone = []
+        __df_name = []
+        __df_email = []
         __df_medium = []
         __df_source = []
-        __df_campaign = []
         for i in range(len(self.data)):
-            __df_source.append(parse('source',str(self.data['referer'][i])))
-            __df_medium.append(parse('medium',str(self.data['referer'][i])))
-            __df_campaign.append(parse('campaign',str(self.data['referer'][i])))
-        self.data_load['utm_source'] = __df_source
-        self.data_load['utm_medium'] = __df_medium
-        self.data_load['utm_campaign'] = __df_campaign
+            if check_nan(self.data['phone'][i]) != 'NaN':
+                __df_phone.append(phone_check(self.data['phone'][i],'str'))
+            else:
+                __df_phone.append(phone_check(self.data['телефон'][i],'str'))
+            if check_nan(self.data['name'][i]) != 'NaN':
+                __df_name.append(check_nan(self.data['name'][i]))
+            else:
+                __df_name.append(check_nan(self.data['имя'][i]))
+            __df_email.append(check_nan(self.data['email'][i]))
+            #__df_source.append(check_nan(self.data['utm_source'][i]))
+            #__df_medium.append(check_nan(self.data['utm_medium'][i]))
+            __phone.append(int(__df_phone[i]))
+        self.data_load['id'] = __phone
+        self.data_load['name'] = __df_name
+        self.data_load['email'] = __df_email
+        #self.data['utm_source'] = __df_source
+        #self.data['utm_medium'] = __df_medium
+        self.data_load['phone'] = __df_phone
         self.data_load['date'] = self.data['created']
+    
