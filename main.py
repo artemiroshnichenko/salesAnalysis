@@ -3,6 +3,7 @@ import pandas as pd
 import clean_data as cd
 import to_mysql
 
+
 def tilda():
     data = cd.Data(rw.r_csv('data/tilda.csv', ';', 0)) #заносим фид в класс
     data.tilda_form() #чистим данные
@@ -28,6 +29,7 @@ def calls():
     a.write()
     print('ok')
 
+
 def order():
     data = cd.Data(rw.r_csv('data/order.csv', ',', 0))
     data.order_form()
@@ -39,6 +41,7 @@ def order():
     a.write()
     print('ok')
 
+
 def popup():
     lang = ['data/popup_ua.csv','data/popup_ru.csv']
     v = pd.DataFrame()
@@ -49,7 +52,6 @@ def popup():
     data = cd.Data(v)
     data.popup_form()
     return data.data_load
-
 
 def client():
     data = rw.r_txt('data/june.txt', 'zzz', 0)
@@ -71,7 +73,7 @@ def check(c_data,data):
 
 def main():
     #order()
-    popup()
+    #popup()
     #calls()
     #tilda()
     #data = client()
@@ -79,10 +81,10 @@ def main():
     #sql.read()
     #print(sql.data)
     #rw.w_csv('data/res.csv',sql.data)
-    #t = tilda()
-    #c = client()
-    #res = check(c, t)
-    #rw.w_csv('data/res.csv',res)
+    t = tilda()
+    c = client()
+    res = check(c, t)
+    rw.w_csv('data/res.csv',res)
 
 
 if __name__ == '__main__':

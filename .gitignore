@@ -19,7 +19,7 @@ data/*
 #*.csv
 
 #Connection hide
-
+Configuration/config.env
 MySQL/connect.py
 
 
