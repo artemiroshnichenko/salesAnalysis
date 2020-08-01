@@ -1,6 +1,7 @@
 import pandas as pd
 import math
 import re
+from urllib import parse
 
 
 #remuve all unnecessary characters
@@ -124,6 +125,9 @@ def  remove_duplicates(self):
         self.data = self.data.reset_index(drop=True)
         self.data_to_load()
 
+def url_parse(url):
+    return dict(parse.parse_qsl(parse.urlsplit(url).query))
+
 class Data:
     def __init__(self, data):
         self.data = data
@@ -147,14 +151,21 @@ class Tilda(Data):
             else:
                 __df_name.append(check_nan(self.data['имя'][i]))
             __df_email.append(check_nan(self.data['email'][i]))
-            #__df_source.append(check_nan(self.data['utm_source'][i]))
-            #__df_medium.append(check_nan(self.data['utm_medium'][i]))
+            __url = url_parse(self.data['referer'])
+            try:
+                __df_source.append(__url['utm_source'])
+            except KeyError:
+                __df_source.append('google')
+            try:
+                __df_source.append(__url['utm_medium'])
+            except KeyError:
+                __df_source.append('ads')
             __phone.append(int(__df_phone[i]))
         self.data_load['id'] = __phone
         self.data_load['name'] = __df_name
         self.data_load['email'] = __df_email
-        #self.data['utm_source'] = __df_source
-        #self.data['utm_medium'] = __df_medium
+        self.data_load['utm_source'] = __df_source
+        self.data_load['utm_medium'] = __df_medium
         self.data_load['phone'] = __df_phone
         self.data_load['date'] = self.data['created']
     
