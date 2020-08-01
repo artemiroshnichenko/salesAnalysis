@@ -102,12 +102,6 @@ def rem_phone(phone):
         phone = ''
     return phone
 
-def parse(mark, url):
-    result = re.search(r'utm_{}=(.+?)(&|$)'.format(mark), url)
-    if result:
-        return result.group(1)
-    return None
-
 def  remove_duplicates(self):
         prev = 1
         j = 0
@@ -126,11 +120,16 @@ def  remove_duplicates(self):
         self.data_to_load()
 
 def url_parse(url):
-    return dict(parse.parse_qsl(parse.urlsplit(url).query))
+    try:
+        url = dict(parse.parse_qsl(parse.urlsplit(url).query))
+    except AttributeError:
+        url = {'fff':'fff'}
+    return url
 
 class Data:
     def __init__(self, data):
         self.data = data
+        
 
 class Tilda(Data):
     def form(self):
@@ -151,15 +150,15 @@ class Tilda(Data):
             else:
                 __df_name.append(check_nan(self.data['имя'][i]))
             __df_email.append(check_nan(self.data['email'][i]))
-            __url = url_parse(self.data['referer'])
+            #__url = url_parse(self.data['referer'])
             try:
-                __df_source.append(__url['utm_source'])
+                __df_source.append(url_parse(self.data['referer'][i])['utm_source'])
             except KeyError:
                 __df_source.append('google')
             try:
-                __df_source.append(__url['utm_medium'])
+                __df_medium.append(url_parse(self.data['referer'][i])['utm_medium'])
             except KeyError:
-                __df_source.append('ads')
+                __df_medium.append('cpc')
             __phone.append(int(__df_phone[i]))
         self.data_load['id'] = __phone
         self.data_load['name'] = __df_name
@@ -212,7 +211,7 @@ class Orders(Data):
             __df_email.append(check_nan(self.data['Email (Billing)'][i]))
             __df_name.append(check_nan(self.data['First Name (Billing)'][i]))
             if self.data['Custom Fields'][i].find('utm_Field') != -1:
-                __df_source.append(self.data['Custom Fields'][i][self.data['Custom Fields'][i].find('utm_Field'):])
+                __df_source.append(url_parse(self.data['Custom Fields'][i]))
             else:
                 __df_source.append('NaN')
             __df_medium.append('NaN')
