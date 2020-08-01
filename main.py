@@ -5,18 +5,18 @@ import to_mysql
 
 
 def tilda():
-    data = cd.Data(rw.r_csv('data/tilda.csv', ';', 0)) #заносим фид в класс
-    data.tilda_form() #чистим данные
-    data.tilda_load() #формируем данные для загрузки
+    data = cd.Tilda(rw.r_csv('data/tilda.csv', ';', 0)) #заносим фид в класс
+    #data.tilda_form() #чистим данные
+    #data.tilda_load() #формируем данные для загрузки
     #data.data_load = data.data_load.sort_values(by=['id']).reset_index(drop=True) #сортировка
     #data.remove_duplicates() #удаление дублей
     #print(data.data)
-    print(data.data_load)
+    print(data.data)
     #a=to_mysql.Mysql('tilda',data.data_load)
     #a.write()
 
     print('ok')
-    return data.data_load
+    #return data.data_load
 
 def calls():
     data = cd.Data(rw.r_csv('data/call.csv', ',', 0))
@@ -81,10 +81,10 @@ def main():
     #sql.read()
     #print(sql.data)
     #rw.w_csv('data/res.csv',sql.data)
-    t = tilda()
-    c = client()
-    res = check(c, t)
-    rw.w_csv('data/res.csv',res)
+    tilda()
+    #c = client()
+    #res = check(c, t)
+    #rw.w_csv('data/res.csv',res)
 
 
 if __name__ == '__main__':
