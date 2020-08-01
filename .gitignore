@@ -18,6 +18,9 @@ MySQL/__pycache__
 data/*
 #*.csv
 
+#Configuration file
+*.env
+
 #Connection hide
 Configuration/config.env
 MySQL/connect.py
