@@ -1,8 +1,50 @@
 from urllib import parse
+import numpy as np
+import pandas as pd
+import json
+import csv
+from datetime import datetime
+
 
 def url_parse(url):
     url = dict(parse.parse_qsl(parse.urlsplit(url).query))
     print(url)
 
-url = 'utm_Field":["||time: 14:56:17&date: 07:01:2020&HTTP_REFERER: https:\/\/pipl.ua\/ru\/kupi-motioncam-i-poluchi-skidku-do-2000-grn-na-hub-2\/?utm_source=youtube&utm_medium=video&utm_campaign=promo||"]||"_ga_tracked":["1"]||"_date_paid":["1578410321"]||"_paid_date":["2020-01-07 15:18:41"]||"_download_permissions_granted":["yes"]||"_recorded_sales":["yes"]||"_recorded_coupon_usage_counts":["yes"]||"_order_stock_reduced":["yes"]||"_edit_lock":["1578410931:1https:\/\/pipl.ua\/ru\/kupi-motioncam-i-poluchi-skidku-do-2000-grn-na-hub-2\/?utm_source=youtube&utm_medium=video&utm_campaign=promo"]}'
-url_parse(url)
+def phone_check(phone, typ):
+    j=0
+    phone=str(phone)
+    if phone == 'nan':
+        return 0
+    elif phone == '':
+        return 0
+    while True:
+        try:
+            if (phone[j].isdigit()!=True):
+                phone=phone[:j] + phone[j+1:]
+                j=j-1
+        except IndexError:
+            break
+        j+=1
+    while len(phone)>10:
+        phone=phone[2:]
+    if typ == 'int':
+        if phone == '':
+            return 0
+        else:
+            return int(phone)
+    elif typ == 'str':
+        return phone
+
+
+FILE_LOCATION = './data/chanel.txt'
+data = pd.read_csv(FILE_LOCATION, header=None, sep="\t")
+print(data)
+i = 0
+js = {}
+while i < len(data):
+    data[0][i] = data[0][i].split(',')
+    data[0][i][1] = phone_check(data[0][i][1], 'int')
+    print(data[0][i], data[0][i+1])
+    js.update({data[0][i][1] : data[0][i+1]})
+    i += 3
+print(js)

@@ -31,11 +31,14 @@ def phone_check(phone, typ):
         return phone
 
 def check_nan(nan):
-    if type(nan) != str:
-        if math.isnan(nan) == True:
-            return 'NaN'
-    else: 
-        return nan
+        if type(nan) != str:
+            try:
+                if math.isnan(nan) == True:
+                    return 'NaN'
+            except TypeError:
+                return 'NaN'
+        else: 
+            return nan
 
 def rem_phone(phone):
     phone=phone_check(phone,'str')
@@ -143,8 +146,10 @@ class Tilda(Data):
         for i in range(len(self.data)):
             if check_nan(self.data['phone'][i]) != 'NaN':
                 __df_phone.append(phone_check(self.data['phone'][i],'str'))
-            else:
+            elif check_nan(self.data['телефон'][i]) != 'NaN':
                 __df_phone.append(phone_check(self.data['телефон'][i],'str'))
+            else:
+                __df_phone.append('0')
             if check_nan(self.data['name'][i]) != 'NaN':
                 __df_name.append(check_nan(self.data['name'][i]))
             else:
@@ -177,7 +182,6 @@ class Calls(Data):
         __df_email = []
         __df_medium = []
         __df_source = []
-        self.data_load['date'] = self.data['Дата']
         for i in range(len(self.data)):
             if rem_phone(self.data['Номер звонящего'][i]) == '':
                 self.data = self.data.drop([i])
@@ -194,6 +198,7 @@ class Calls(Data):
         self.data_load['utm_source'] = __df_source
         self.data_load['utm_medium'] = __df_medium
         self.data_load['phone'] = __df_phone
+        self.data_load['date'] = self.data['Дата']
 
 class Orders(Data):
     def form(self):
@@ -236,7 +241,10 @@ class Popups(Data):
             __phone.append(phone_check(self.data['phone'][i],'int'))
             __df_phone.append(phone_check(self.data['phone'][i],'str'))
             __df_email.append('NaN')
-            __df_source.append(check_nan(self.data['parameter-string-field'][i]))
+            #try:
+            __df_source.append(url_parse(self.data['parameter-string-field'][i]))
+            #except KeyError:
+            #    __df_source.append('NaN')
             __df_medium.append('NaN')
             __df_name.append('NaN')
         self.data_load['id'] = __phone
@@ -281,4 +289,13 @@ class Clients(Data):
         self.data_load['price'] = __price
         self.data_load['revenue'] = __revenue
   
+class Chanel(Data):
+    def form(self):
+        i = 0
+        self.dict = {}
+        while i < len(self.data)-1:
+            self.data[0][i] = self.data[0][i].split(',')
+            self.data[0][i][1] = phone_check(self.data[0][i][1], 'int')
+            self.dict.update({self.data[0][i][1] : self.data[0][i+1]})
+            i += 3
 
