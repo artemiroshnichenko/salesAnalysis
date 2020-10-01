@@ -25,6 +25,12 @@ def calls():
     data.form()
     return data.data_load
 
+def calls_b():
+    data = cd.Calls_b(rw.r_csv('data/binotel.csv', ';', 0))
+    data.form()
+    #print(data.data_load)
+    return data.data_load
+
 def order():
     data = cd.Orders(rw.r_csv('data/order.csv', ',', 0))
     data.form()
@@ -42,7 +48,8 @@ def popup():
     return data.data_load
 
 def client():
-    data = rw.r_txt('data/июль.txt', 'zzz', 0)
+    data = rw.r_txt('data/sep.txt', 'zzz', 0)
+    print(data)
     data = data.drop([0,1,2,3,4,5]).reset_index(drop=True)
     data = cd.Clients(data)
     data.form()
@@ -52,6 +59,15 @@ def chanel():
     FILE_LOCATION = './data/chanel.txt'
     data = cd.Chanel(pd.read_csv(FILE_LOCATION, header=None, sep="\t"))
     data.form()
+    #print(data.dict)
+    return data.dict
+
+def chanel_crm():
+    FILE_LOCATION = './data/crm.csv'
+    data = cd.Chanel_crm(rw.r_csv(FILE_LOCATION, ';', 0))
+    #print(data)
+    data.form()
+    #print(data.dict)
     return data.dict
 
 def find(id, data):
@@ -74,11 +90,15 @@ def find(id, data):
 
 def check():
     d_tilda = tilda()
-    d_calls = calls()
+    #d_calls = calls()
+    d_calls = calls_b()
     d_order = order()
     d_popup = popup()
     d_client = client()
-    d_chanel = chanel()
+    print(d_client)
+    #d_chanel = chanel()
+    d_chanel = chanel_crm()
+    d_chanel.update(chanel())
     res = pd.DataFrame(columns=['client','price', 'revenue', 'utm'])
     utm: dict
     for i in range(len(d_client)):
@@ -105,23 +125,6 @@ def main():
     res = check()
     print(res)
     rw.w_csv('./data/res.csv', res)
-    #check()
-    #order()
-    #print(popup())
-    #calls()
-    #tilda()
-    #data = client()
-    #sql = to_mysql.Mysql('lead', data)
-    #sql.read()
-    #print(sql.data)
-    #rw.w_csv('data/res.csv',sql.data)
-    #tilda()
-    #c = client()
-    #res = check(c, t)
-    #rw.w_csv('data/res.csv',res)
-    #order()
-    #print(client())
-    #chanel()
     print('ok')
 
 

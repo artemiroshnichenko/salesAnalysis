@@ -146,14 +146,14 @@ class Tilda(Data):
         for i in range(len(self.data)):
             if check_nan(self.data['phone'][i]) != 'NaN':
                 __df_phone.append(phone_check(self.data['phone'][i],'str'))
-            elif check_nan(self.data['телефон'][i]) != 'NaN':
-                __df_phone.append(phone_check(self.data['телефон'][i],'str'))
+            #elif check_nan(self.data['телефон'][i]) != 'NaN':
+            #    __df_phone.append(phone_check(self.data['телефон'][i],'str'))
             else:
                 __df_phone.append('0')
-            if check_nan(self.data['name'][i]) != 'NaN':
-                __df_name.append(check_nan(self.data['name'][i]))
-            else:
-                __df_name.append(check_nan(self.data['имя'][i]))
+            #if check_nan(self.data['name'][i]) != 'NaN':
+            #    __df_name.append(check_nan(self.data['name'][i]))
+            #else:
+            #    __df_name.append(check_nan(self.data['имя'][i]))
             __df_email.append(check_nan(self.data['email'][i]))
             #__url = url_parse(self.data['referer'])
             try:
@@ -166,7 +166,7 @@ class Tilda(Data):
                 __df_medium.append('cpc')
             __phone.append(int(__df_phone[i]))
         self.data_load['id'] = __phone
-        self.data_load['name'] = __df_name
+        self.data_load['name'] = self.data['name']#__df_name
         self.data_load['email'] = __df_email
         self.data_load['utm_source'] = __df_source
         self.data_load['utm_medium'] = __df_medium
@@ -199,6 +199,30 @@ class Calls(Data):
         self.data_load['utm_medium'] = __df_medium
         self.data_load['phone'] = __df_phone
         self.data_load['date'] = self.data['Дата']
+
+class Calls_b(Data):
+    def form(self):
+        self.data_load = pd.DataFrame()
+        __phone = []
+        __df_phone = []
+        __df_name = []
+        __df_email = []
+        __df_medium = []
+        __df_source = []
+        for i in range(len(self.data)):
+            __df_phone.append(phone_check(self.data['customer number'][i],'str'))
+            __phone.append(phone_check(self.data['customer number'][i],'int'))
+            __df_email.append('NaN')
+            __df_name.append(self.data['customer name'][i]) 
+            __df_source.append(check_nan(self.data['utm_source'][i]))
+            __df_medium.append(check_nan(self.data['utm_medium'][i]))
+        self.data_load['id'] = __phone
+        self.data_load['name'] = __df_name
+        self.data_load['email'] = __df_email
+        self.data_load['utm_source'] = __df_source
+        self.data_load['utm_medium'] = __df_medium
+        self.data_load['phone'] = __df_phone
+        self.data_load['date'] = self.data['date']
 
 class Orders(Data):
     def form(self):
@@ -295,7 +319,19 @@ class Chanel(Data):
         self.dict = {}
         while i < len(self.data)-1:
             self.data[0][i] = self.data[0][i].split(',')
-            self.data[0][i][1] = phone_check(self.data[0][i][1], 'int')
+            try:
+                self.data[0][i][1] = phone_check(self.data[0][i][1], 'int')
+            except IndexError:
+                self.data[0][i][1] = 0
             self.dict.update({self.data[0][i][1] : self.data[0][i+1]})
-            i += 3
+            i += 2
 
+
+class Chanel_crm(Data):
+    def form(self):
+        i = 0
+        self.dict = {}
+        while i < len(self.data)-1:
+            self.data['Телефон'][i] = phone_check(self.data['Телефон'][i],'int')
+            self.dict.update({self.data['Телефон'][i] : self.data['Канал'][i]})
+            i += 1
