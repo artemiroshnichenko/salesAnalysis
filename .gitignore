@@ -4,13 +4,14 @@
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
-__pycache__/
+__pycache__
 *.py[cod]
 *$py.class
 MySQL/__pycache__
 .vscode
 .pytest_cache
 pytest
+.DS_Store
 
 # Test files
 test
@@ -19,9 +20,7 @@ test
 *.so
 
 # Data hide 
-
-!data/
-data/*
+data
 *.json
 *.csv
 
