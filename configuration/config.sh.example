@@ -1,0 +1,10 @@
+# MySQL connection
+export MS_HOST =
+export MS_PORT =
+export MS_USER =
+export MS_PASS =
+export MS_DATA_BASE =
+
+# Google Analytics Reporting API V4
+export GA_KEY_FILE_LOCATION = 
+export GA_VIEW_ID = 

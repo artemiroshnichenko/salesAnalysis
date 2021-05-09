@@ -12,22 +12,22 @@ MySQL/__pycache__
 .pytest_cache
 pytest
 
+# Test files
+test
+
 # C extensions
 *.so
 
-#Data hide 
+# Data hide 
 
 !data/
 data/*
-#*.csv
+*.json
+*.csv
 
-#Configuration file
+# Configuration file
 *.env
-
-#Connection hide
-Configuration/config.env
-MySQL/connect.py
-
+*.sh
 
 # Distribution / packaging
 .Python
