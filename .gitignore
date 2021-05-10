@@ -11,7 +11,6 @@ MySQL/__pycache__
 .vscode
 .pytest_cache
 pytest
-.DS_Store
 
 # Test files
 test

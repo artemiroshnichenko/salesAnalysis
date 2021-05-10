@@ -1,7 +1,6 @@
 import os 
 import mysql.connector as sql
 from dotenv import load_dotenv
-import pandas as pd
 
 
 # Google Analytics Reporting API V4
@@ -11,7 +10,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 class googleAnalitics():
 
-    __init__(self, KEY_FILE_LOCATION, VIEW_ID):
+    def __init__(self, KEY_FILE_LOCATION, VIEW_ID):
         self.SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
         self.KEY_FILE_LOCATION = KEY_FILE_LOCATION
         self.VIEW_ID = VIEW_ID
@@ -37,7 +36,12 @@ class googleAnalitics():
         Returns:
             The Analytics Reporting API V4 response.
         """
-        return analytics.reports().batchGet(body=body).execute()
+        self.analytics.reports().batchGet(body=body).execute()
 
-if __name__ == __main__:
+
+def main():
     pass
+
+
+if __name__ == '__main__':
+    main()
