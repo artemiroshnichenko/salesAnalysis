@@ -7,6 +7,11 @@ import pandas as pd
 from apiclient.discovery import build
 from oauth2client.service_account import ServiceAccountCredentials
 
+import requests
+from datetime import datetime, timedelta
+import hashlib
+import json
+
 
 class googleAnalitics():
 
@@ -41,7 +46,8 @@ class googleAnalitics():
                 'viewId': self.VIEW_ID,
                 'dateRanges': [{'startDate': START_DATE, 'endDate': END_DATE}],
                 'dimensions': [{'name': name} for name in DIMS],
-                'metrics': [{'expression': exp} for exp in METRICS]
+                'metrics': [{'expression': exp} for exp in METRICS],
+                'pageSize': 100000
             }]
 
     def get_report(self):
@@ -53,7 +59,8 @@ class googleAnalitics():
             The Analytics Reporting API V4 response json.
         """
         self.report = self.analytics.reports().batchGet(body=\
-            {'reportRequests':self.requests_list }).execute()
+            {'reportRequests':self.requests_list}).execute()
+            
         return self.report
 
     def convert_to_df(self):
@@ -77,17 +84,55 @@ class googleAnalitics():
         return df
 
 
-    class binotel():
+class binotel():
+
+    def __init__(self, key, secret):
+        self.key = key
+        self.secret = secret
+        self.API_URLS = {
+        'calltracking': 'https://api.binotel.com/api/4.0/stats/calltracking-calls-for-period.json',
+        'incomming': 'https://api.binotel.com/api/4.0/stats/incoming-calls-for-period.json'
+        }
+    
+    def request_perid(self, name, start_day=datetime.timestamp(datetime.today()),
+                            end_day=datetime.timestamp(datetime.today())):
+        api_url = self.API_URLS[name]
+        params = {
+                'key': self.key,
+                'secret': self.secret,
+                'startTime': start_day,
+                'stopTime': end_day,
+            }
+        response = requests.post(api_url, json=params)
+        if response.status_code == 200: 
+            if response.json()['status'] == 'success':
+                self.json = response.json()
+            else:
+                print('Wrong parametrs ', response.json())
+        else:
+            print('Wrong request ', response)
+    
+    def get_call():
+        #Нужно реализовывать через запрос в браузере
         pass
 
+        
 
-    class sql():
+
+class sql():
+    pass
+
+class oneC():
+    
+    def __init__(self):
+        pass
+
+    def convert_to_df(self):
         pass
 
 
 def main():
-    pass
-
+    
 
 if __name__ == '__main__':
     main()
