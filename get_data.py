@@ -2,6 +2,7 @@ import os
 import mysql.connector as sql
 from dotenv import load_dotenv
 import pandas as pd
+import woocommerce
 
 # Google Analytics Reporting API V4
 from apiclient.discovery import build
@@ -125,7 +126,35 @@ class binotel():
         pass
 
         
+class woocommerce():
 
+    def __init__(self, key, secret):
+        self.url = 'https://pipl.ua/wp-json/wc/v3/orders'
+        self.consumer_key = key
+        self.consumer_secret = secret
+
+    def get_order(self):
+        """Request to get order data from woocommerce
+        Args:
+            consumer_key: API key
+            consumer_secret: API secret
+        Returns: all orders in json
+        """
+        params = {
+            'consumer_key': self.consumer_key,
+            'consumer_secret': self.consumer_secret
+        }
+        headers ={
+            'user-agent': 'python'
+        }
+        response = requests.get(self.url, params=params, headers=headers)
+        if response.status_code == 200: 
+            self.json = response.json()
+        else:
+            print('Wrong request ', response)
+
+    def get_form(self):
+        pass
 
 class sql():
     pass
