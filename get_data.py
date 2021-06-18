@@ -10,6 +10,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 
 import requests
 from datetime import datetime, timedelta
+import time
 import hashlib
 import json
 
@@ -133,28 +134,73 @@ class WoocommerceResolver():
         self.consumer_key = key
         self.consumer_secret = secret
 
-    def get_order(self):
+    def get_order(self, start_day=None, end_day=None):
         """Request to get order data from woocommerce
         Args:
             consumer_key: API key
             consumer_secret: API secret
+            start_day: format 2016-06-22T00:00:00 of start period day
+            end_day: format 2016-06-22T00:00:00 of end period day
         Returns: all orders in json
         """
-        params = {
-            'consumer_key': self.consumer_key,
-            'consumer_secret': self.consumer_secret
-        }
-        headers ={
-            'user-agent': 'python'
-        }
-        response = requests.get(self.url, params=params, headers=headers)
-        if response.status_code == 200: 
-            self.json = response.json()
-        else:
-            print('Wrong request ', response)
+        i = 1
+        self.json = []
+        while True:
+            params = {
+                'consumer_key': self.consumer_key,
+                'consumer_secret': self.consumer_secret,
+                'per_page': 100,
+                'after': start_day,
+                'before': end_day,
+                'page': i
+            }
+            headers ={
+                'user-agent': 'python'
+            }
+            response = requests.get(self.url, params=params, headers=headers)
+            if response.status_code == 200:
+                if response.json() != []:
+                    self.json.append(response.json())
+                else: 
+                    break
+            else:
+                print('Wrong request ', response)
+                return response
+            i += 1
+            if i > 2:
+                break
+        return self.json
 
     def get_form(self):
         pass
+
+
+class ConverterJson():
+
+    def __init__(self, raw):
+        self.json = raw
+
+    def get_data_frame(self):
+        """Convert JSON to DataFrame
+        Args: 
+            json
+        Return: 
+            DataFrame"""
+        data = pd.DataFrame()
+        print()
+        for page in self.json:
+            for i in page:
+                ga = None
+                fb = None
+                billing = i['billing']
+                for j in i['meta_data']:
+                    if j['key'] == '_ga':
+                        ga = j['value']
+                    elif j['key'] == '_fbp':
+                        fb = j['value']
+                data = data.append({'name': billing['first_name'], 'email': billing['email'], 
+                                'phone': billing['phone'], 'ga': ga, 'fb': fb}, ignore_index=True)
+        print(data.drop_duplicates().reset_index().drop(columns='index'))
 
 
 class TildaResolver():
@@ -162,8 +208,9 @@ class TildaResolver():
     def __init__(self):
         pass
 
-    def get_data_file(self):
+    def convert(self):
         pass
+
 
 class SqlHelper():
     pass
