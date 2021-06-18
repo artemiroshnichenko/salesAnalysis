@@ -14,7 +14,7 @@ import hashlib
 import json
 
 
-class googleAnalitics():
+class GoogleAnaliticsResolver():
 
     def __init__(self, KEY_FILE_LOCATION, VIEW_ID):
         self.SCOPES = ['https://www.googleapis.com/auth/analytics.readonly']
@@ -85,7 +85,7 @@ class googleAnalitics():
         return df
 
 
-class binotel():
+class BinotelResolver():
 
     def __init__(self, key, secret):
         self.key = key
@@ -126,7 +126,7 @@ class binotel():
         pass
 
         
-class woocommerce():
+class WoocommerceResolver():
 
     def __init__(self, key, secret):
         self.url = 'https://pipl.ua/wp-json/wc/v3/orders'
@@ -156,10 +156,19 @@ class woocommerce():
     def get_form(self):
         pass
 
-class sql():
+
+class TildaResolver():
+
+    def __init__(self):
+        pass
+
+    def get_data_file(self):
+        pass
+
+class SqlHelper():
     pass
 
-class oneC():
+class OneCResolver():
     
     def __init__(self):
         pass
