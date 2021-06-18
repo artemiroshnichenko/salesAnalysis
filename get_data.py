@@ -66,7 +66,7 @@ class googleAnalitics():
     def convert_to_df(self):
         """Convert json response to pandas data frame
         Returns:
-            Report data
+            Report data frame
         """
         data_dic = {f"{i}": [] for i in self.DIMS + self.METRICS}
         for report in self.report.get('reports', []):
@@ -96,6 +96,14 @@ class binotel():
     
     def request_perid(self, name, start_day=datetime.timestamp(datetime.today()),
                             end_day=datetime.timestamp(datetime.today())):
+        """Request to get call report
+        Args:
+            name: type of request
+            start_day: timestamp of start period day
+            end_day: timestamp of end period day
+        Returns:
+            json report. 
+        """
         api_url = self.API_URLS[name]
         params = {
                 'key': self.key,
@@ -132,7 +140,7 @@ class oneC():
 
 
 def main():
-    
+    pass
 
 if __name__ == '__main__':
     main()
