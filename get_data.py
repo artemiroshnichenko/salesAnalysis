@@ -1,6 +1,7 @@
 import os 
 import mysql.connector as sql
 from dotenv import load_dotenv
+from numpy import ERR_IGNORE, source
 import pandas as pd
 import woocommerce
 
@@ -117,6 +118,7 @@ class BinotelResolver():
         if response.status_code == 200: 
             if response.json()['status'] == 'success':
                 self.json = response.json()
+                return self.json
             else:
                 print('Wrong parametrs ', response.json())
         else:
@@ -187,7 +189,6 @@ class ConverterJson():
         Return: 
             DataFrame"""
         data = pd.DataFrame()
-        print()
         for page in self.json:
             for i in page:
                 ga = None
@@ -201,6 +202,40 @@ class ConverterJson():
                 data = data.append({'name': billing['first_name'], 'email': billing['email'], 
                                 'phone': billing['phone'], 'ga': ga, 'fb': fb}, ignore_index=True)
         print(data.drop_duplicates().reset_index().drop(columns='index'))
+
+    def bi(self):
+        data = pd.DataFrame()
+        raw = self.json['callDetails']
+        for call_id in raw:
+            try:
+                source = raw[call_id]['pbxNumberData']['name']
+            except KeyError as error:
+                if error == 'name':
+                    source = None
+                else:
+                    print('KeyError ', error)
+            try:
+                manager = raw[call_id]['employeeData']['name']
+            except TypeError:
+                    manager = None
+            data = data.append({'id': call_id, 'phone': raw[call_id]['externalNumber'], 'source': source, 
+                                'manager': manager, 'billsec': raw[call_id]['billsec']}, ignore_index=True)
+        print(data)
+    
+    def cl_tr(self):
+        data = pd.DataFrame()
+        raw = self.json['callDetails']
+        for call_id in raw:
+            try:
+                manager = raw[call_id]['employeeData']['name']
+            except TypeError:
+                    manager = None
+            data = data.append({'id': call_id, 
+                                'phone': raw[call_id]['externalNumber'], 
+                                'ga': raw[call_id]['callTrackingData']['gaClientId'], 
+                                'manager': manager, 
+                                'billsec': raw[call_id]['billsec']}, ignore_index=True)
+        print(data)
 
 
 class TildaResolver():
