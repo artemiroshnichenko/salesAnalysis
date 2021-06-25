@@ -35,7 +35,7 @@ class GoogleAnaliticsResolver():
                 'dateRanges': [{'startDate': START_DATE, 'endDate': END_DATE}],
                 'dimensions': [{'name': name} for name in DIMS],
                 'metrics': [{'expression': exp} for exp in METRICS],
-                'pageSize': 100000
+                'pageSize': 1000
             }]
 
     def get_report(self):
@@ -48,7 +48,18 @@ class GoogleAnaliticsResolver():
         """
         self.report = self.analytics.reports().batchGet(body=\
             {'reportRequests':self.requests_list}).execute()
-            
+        report = self.report
+        while True:
+            if 'nextPageToken' in report['reports'][0]:
+                self.requests_list[0]['pageToken'] = report['reports'][0]['nextPageToken']
+                report = self.analytics.reports().batchGet(body=\
+                    {'reportRequests':self.requests_list}).execute()
+                for element in report['reports'][0]['data']['rows']:
+                    self.report['reports'][0]['data']['rows'].append(element)
+            else:
+                break
+        if 'nextPageToken' in self.report['reports'][0]:
+            self.report['reports'][0].pop('nextPageToken')
         return self.report
 
 
