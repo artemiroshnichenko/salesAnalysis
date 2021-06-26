@@ -1,6 +1,5 @@
 from clickhouse_driver import Client
 from clickhouse_driver import connect
-from clickhouse_driver.dbapi import cursor
 import pandas as pd
 
 
@@ -39,7 +38,11 @@ class ClickHouseResolver():
 
     def insert(self, table: str, data):
         self.check_table(table)
-        self.client.insert_dataframe('INSERT INTO %s VALUES' % table, data)
+        s = '('
+        for column in data.columns:
+            s += column +','
+        s = s[:len(s)-1] + ')'
+        self.client.insert_dataframe('INSERT INTO %s %s VALUES' % (table, s), data)
         pass
 
     def check_table(self, table):
