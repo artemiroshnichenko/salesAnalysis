@@ -35,7 +35,7 @@ class GoogleAnaliticsResolver():
                 'dateRanges': [{'startDate': START_DATE, 'endDate': END_DATE}],
                 'dimensions': [{'name': name} for name in DIMS],
                 'metrics': [{'expression': exp} for exp in METRICS],
-                'pageSize': 1000
+                'pageSize': 100000
             }]
 
     def get_report(self):

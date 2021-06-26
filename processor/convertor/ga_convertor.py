@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 
-class GAConvertor():
+class GoogleAnaliticsConvertor():
 
     def __init__(self, raw, columns) -> None:
         self.json = raw
