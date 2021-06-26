@@ -43,7 +43,7 @@ class BinotelResolver():
 
     def alltracking_calls_period(self, start_day=datetime.timestamp(datetime.today()),
                 end_day=datetime.timestamp(datetime.today())):
-        return self.port('stats/calltracking-calls-for-period.json', self.set_date(start_day, end_day))
+        return self.post('stats/calltracking-calls-for-period.json', self.set_date(start_day, end_day))
     
     def get_call():
         #Нужно реализовывать через запрос в браузере
