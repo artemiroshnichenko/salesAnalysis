@@ -41,7 +41,7 @@ class BinotelResolver():
                 end_day=datetime.timestamp(datetime.today())):
         return self.post('stats/incoming-calls-for-period.json', self.set_date(start_day, end_day))
 
-    def alltracking_calls_period(self, start_day=datetime.timestamp(datetime.today()),
+    def calltracking_calls_period(self, start_day=datetime.timestamp(datetime.today()),
                 end_day=datetime.timestamp(datetime.today())):
         return self.post('stats/calltracking-calls-for-period.json', self.set_date(start_day, end_day))
     
