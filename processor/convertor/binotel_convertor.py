@@ -14,16 +14,16 @@ class BinotelConvertor():
                 source = raw[call_id]['pbxNumberData']['name'].encode('UTF-8')
             except KeyError as error:
                 if error == 'name':
-                    source = None
+                    source = ''
                 else:
                     print('KeyError ', error)
             try:
                 manager = raw[call_id]['employeeData']['name'].encode('UTF-8')
             except TypeError:
-                    manager = None
+                manager = ''
             self.data = self.data.append({'id': call_id, 'phone': raw[call_id]['externalNumber'], 'source': source, 
-                                'manager': manager, 'billsec': int(raw[call_id]['billsec'])}, ignore_index=True)
-        return self.data
+                                'manager': manager, 'billsec': raw[call_id]['billsec']}, ignore_index=True)
+        return self.data.astype({'billsec': int})
     
     def call_tracking(self):
         raw = self.json['callDetails']
@@ -31,13 +31,13 @@ class BinotelConvertor():
             try:
                 manager = raw[call_id]['employeeData']['name'].encode('UTF-8')
             except TypeError:
-                    manager = None
+                    manager = ''
             self.data = self.data.append({'id': call_id, 
                                 'phone': raw[call_id]['externalNumber'], 
-                                'ga': raw[call_id]['callTrackingData']['gaClientId'], 
+                                'ga_id': raw[call_id]['callTrackingData']['gaClientId'], 
                                 'manager': manager, 
                                 'billsec': raw[call_id]['billsec']}, ignore_index=True)
-        return self.data
+        return self.data.astype({'billsec': int})
 
 
 def main():
