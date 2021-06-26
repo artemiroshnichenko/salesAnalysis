@@ -26,11 +26,11 @@ class GAConvertor():
         index_timestamp = self.json['reports'][0]['columnHeader']['dimensions'].index('ga:dateHourMinute')
         for dimension in row['dimensions']:
             if row['dimensions'][index_timestamp] == dimension:
-                __data.append(int(datetime.timestamp(datetime.strptime(dimension, '%Y%m%d%H%M'))))
+                __data.append(datetime.strptime(dimension, '%Y%m%d%H%M'))
             else:
-                __data.append(dimension)
+                __data.append(dimension.encode('UTF-8'))
         for metric in row['metrics']:
-            __data.append(metric['values'][0])
+            __data.append(int(metric['values'][0].split('.')[0]))
         return pd.Series(__data, index=self.columns)
 
 def main():
