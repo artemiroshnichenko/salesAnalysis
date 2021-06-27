@@ -1,4 +1,5 @@
 import pandas as pd
+from datetime import datetime
 
 
 class BinotelConvertor():
@@ -26,8 +27,9 @@ class BinotelConvertor():
                                         'source': source, 
                                         'manager': manager, 
                                         'billsec': raw[call_id]['billsec'],
-                                        'timestamp': raw[call_id]['startTime']}, ignore_index=True)
-        return self.data.astype({'billsec': int, 'timestamp': int})
+                                        'timestamp': datetime.fromtimestamp(int(raw[call_id]['startTime']))}, 
+                                        ignore_index=True)
+        return self.data.astype({'billsec': int})
     
     def call_tracking(self):
         raw = self.json['callDetails']
@@ -41,8 +43,9 @@ class BinotelConvertor():
                                 'ga_id': raw[call_id]['callTrackingData']['gaClientId'], 
                                 'manager': manager, 
                                 'billsec': raw[call_id]['billsec'],
-                                'timestamp': raw[call_id]['startTime']}, ignore_index=True)
-        return self.data.astype({'billsec': int, 'timestamp': int})
+                                'timestamp': datetime.fromtimestamp(int(raw[call_id]['startTime']))},
+                                 ignore_index=True)
+        return self.data.astype({'billsec': int})
 
 
 def main():
