@@ -14,7 +14,6 @@ class WoocommerceConvertor():
             json
         Return: 
             DataFrame"""
-        
         for page in self.json:
             self.page_convertor(page)
         return self.data.drop_duplicates().reset_index().drop(columns='index')
