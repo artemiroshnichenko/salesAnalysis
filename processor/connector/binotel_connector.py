@@ -1,6 +1,8 @@
 from datetime import datetime
 import requests
-
+from selenium import webdriver
+from time import sleep
+from webdriver_manager.chrome import ChromeDriverManager
 
 class BinotelResolver():
 
@@ -45,10 +47,37 @@ class BinotelResolver():
                 end_day=datetime.timestamp(datetime.today())):
         return self.post('stats/calltracking-calls-for-period.json', self.set_date(start_day, end_day))
     
-    def get_call():
-        #Нужно реализовывать через запрос в браузере
-        pass
-
+    def get_call(self, start_day, end_day):
+        start_day = datetime.strftime(datetime.strptime(start_day, '%Y-%m-%d'), '%d.%m.%Y')
+        end_day = datetime.strftime(datetime.strptime(end_day, '%Y-%m-%d'), '%d.%m.%Y')
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.add_argument('window-size=1920x935')
+        self.driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(),
+                                    options=chrome_options)
+        self.login(self.key, self.secret, start_day, end_day)
+        return self.driver.page_source
+        
+    def login(self, login, passw, start_day, end_day):
+        url = 'https://my.binotel.ua/?module=gcStatistics&showOnlyFilters=&startDate='\
+             + start_day + '&stopDate=' + end_day
+        self.driver.get(url)
+        sleep(2)
+        try: 
+            logining = self.driver.find_element_by_name('logining[email]')
+            password = self.driver.find_element_by_name('logining[password]')
+            button = self.driver.find_element_by_name('logining[submit]')
+            logining.send_keys(login)
+            password.send_keys(passw)
+            button.click()
+            sleep(10)
+            self.driver.get('https://my.binotel.ua/?module=gcStatistics&\
+                showOnlyFilters=&startDate=%s&stopDate=%s' % start_day, end_day)
+        except:
+            pass
+        return self.driver
+    
 
 def main():
     pass
