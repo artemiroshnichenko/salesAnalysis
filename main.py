@@ -18,12 +18,7 @@ def ga(dims, metrcs, start_date, end_date, columns, database, table):
     ga_json = ga_request.get_report()
     ga_convert = ga_convertor.GoogleAnaliticsConvertor(ga_json, columns)
     ga_data = ga_convert.get_data()
-    clickhouse = clickhouse_worker.ClickHouseResolver()
-    clickhouse.connect_to_client(host=os.getenv('click_host'), 
-                port=os.getenv('click_port'), database=database)
-    ga_data = ga_data[columns]
-    clickhouse.insert(table, ga_data)
-    clickhouse.disconnect()
+    clichouse('client', 'browser', ga_data)
 
 def binotel(start_day, end_day):
     binotel_resolv = binotel_connector.BinotelResolver(
@@ -34,15 +29,18 @@ def binotel(start_day, end_day):
     data = binotel_resolv.incoming_calls_period(start_day, end_day)
     binotel_convert = binotel_convertor.BinotelConvertor(data)
     in_data = binotel_convert.incoming()
-    clickhouse = clickhouse_worker.ClickHouseResolver()
-    clickhouse.connect_to_client(host=os.getenv('click_host'), 
-                    port=os.getenv('click_port'), database='client')
-    clickhouse.insert('calls', in_data)
+    clichouse('client', 'calls', in_data)
     data = binotel_resolv.calltracking_calls_period(start_day, end_day)
     binotel_convert = binotel_convertor.BinotelConvertor(data)
     in_data = binotel_convert.call_tracking()
-    clickhouse.insert('calls', in_data)
-    clickhouse.disconnect()
+    clichouse('client', 'calls', in_data)
+
+def binotel_get(start_day, end_day):
+    b = binotel_connector.BinotelResolver(os.getenv('binotel_login'), os.getenv('binotel_pass'))
+    html = b.get_call(start_day, end_day)
+    binotel_convert = binotel_convertor.BinotelConvertor(html)
+    get_data = binotel_convert.get_call()     
+    clichouse('client', 'calls', get_data)
 
 def woocommerce():
     woocommerce_resolv = woocommerce_connector.WoocommerceResolver(
@@ -50,12 +48,15 @@ def woocommerce():
     data = woocommerce_resolv.get_order()
     woocommerce_convert = woocommerce_convertor.WoocommerceConvertor(data)
     woo_data = woocommerce_convert.get_data_frame()
+    clichouse('client', 'client', woo_data)
+
+def clichouse(database, table, data):
     clickhouse = clickhouse_worker.ClickHouseResolver()
     clickhouse.connect_to_client(host=os.getenv('click_host'), 
-                    port=os.getenv('click_port'), database='client')
-
-    clickhouse.insert('client', woo_data)
+                    port=os.getenv('click_port'), database=database)
+    clickhouse.insert(table, data)
     clickhouse.disconnect()
+
 
 def main():
     load_dotenv('configuration/config.env')
@@ -63,12 +64,13 @@ def main():
         'ga:source', 'ga:medium', 'ga:campaign','ga:country', 'ga:sessionCount']
     metrics = ['ga:avgSessionDuration']
     columns = ['ga_id', 'timestamp', 'source', 'medium', 'campaign', 'country', 'session_count','avg_session_duration']
-    ga(dims, metrics, '2021-05-01', '2021-06-24', columns, 'client', 'browser')
+    ga(dims, metrics, '2021-05-01', '2021-06-24', columns)
     dims = ['ga:dimension2', 'ga:dimension1', 'ga:dateHourMinute', 
         'ga:source', 'ga:medium', 'ga:campaign','ga:country', 'ga:sessionCount']
     columns = ['ga_id', 'fb_id', 'timestamp', 'source', 'medium', 'campaign', 'country', 'session_count','avg_session_duration']
-    ga(dims, metrics, '2021-06-25', 'today', columns, 'client', 'browser')
+    ga(dims, metrics, '2021-06-25', 'today', columns)
     binotel('2020-05-01', '2021-06-26')
+    binotel_get('2020-05-01', '2021-06-26')
     woocommerce()
 
 if __name__ == '__main__':
