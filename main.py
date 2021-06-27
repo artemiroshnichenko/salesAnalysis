@@ -4,6 +4,8 @@ from processor.connector import ga_connector
 from processor.convertor import ga_convertor
 from processor.connector import binotel_connector
 from processor.convertor import binotel_convertor
+from processor.connector import woocommerce_connector
+from processor.convertor import woocommerce_convertor
 from processor.worker import clickhouse_worker
 from datetime import datetime
 
@@ -42,6 +44,19 @@ def binotel(start_day, end_day):
     clickhouse.insert('calls', in_data)
     clickhouse.disconnect()
 
+def woocommerce():
+    woocommerce_resolv = woocommerce_connector.WoocommerceResolver(
+        os.getenv('consumer_key'), os.getenv('consumer_secret'))
+    data = woocommerce_resolv.get_order()
+    woocommerce_convert = woocommerce_convertor.WoocommerceConvertor(data)
+    woo_data = woocommerce_convert.get_data_frame()
+    clickhouse = clickhouse_worker.ClickHouseResolver()
+    clickhouse.connect_to_client(host=os.getenv('click_host'), 
+                    port=os.getenv('click_port'), database='client')
+
+    clickhouse.insert('client', woo_data)
+    clickhouse.disconnect()
+
 def main():
     load_dotenv('configuration/config.env')
     dims = ['ga:dimension2', 'ga:dateHourMinute', 
@@ -54,6 +69,7 @@ def main():
     columns = ['ga_id', 'fb_id', 'timestamp', 'source', 'medium', 'campaign', 'country', 'session_count','avg_session_duration']
     ga(dims, metrics, '2021-06-25', 'today', columns, 'client', 'browser')
     binotel('2020-05-01', '2021-06-26')
+    woocommerce()
 
 if __name__ == '__main__':
     main()
