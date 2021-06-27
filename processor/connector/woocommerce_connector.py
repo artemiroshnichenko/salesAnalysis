@@ -27,6 +27,7 @@ class WoocommerceResolver():
                 'per_page': self.MAX_ORDER,
                 'after': start_day,
                 'before': end_day,
+                'per_page': 100,
                 'page': page_number
             }
             headers ={
@@ -42,8 +43,6 @@ class WoocommerceResolver():
                 print('Wrong request ', response)
                 return response
             page_number += 1
-            if page_number > 2:
-                break
         return self.json
 
     def get_form(self):
