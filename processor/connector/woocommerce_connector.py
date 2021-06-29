@@ -4,7 +4,6 @@ import requests
 class WoocommerceResolver():
 
     def __init__(self, key, secret):
-        self.url = 'https://pipl.ua/wp-json/wc/v3/orders'
         self.consumer_key = key
         self.consumer_secret = secret
         self.MAX_ORDER = 100
@@ -18,6 +17,7 @@ class WoocommerceResolver():
             end_day: format 2016-06-22T00:00:00 of end period day
         Returns: all orders in json
         """
+        url = 'https://pipl.ua/wp-json/wc/v3/orders'
         page_number = 1
         self.json = []
         while True:
@@ -33,7 +33,7 @@ class WoocommerceResolver():
             headers ={
                 'user-agent': 'python'
             }
-            response = requests.get(self.url, params=params, headers=headers)
+            response = requests.get(url, params=params, headers=headers)
             if response.status_code == 200:
                 if response.json() != []:
                     self.json.append(response.json())
@@ -45,8 +45,19 @@ class WoocommerceResolver():
             page_number += 1
         return self.json
 
-    def get_form(self):
-        pass
+    def get_form(self, start_day=None, end_day=None):
+        url = 'https://pipl.ua/contact-form.json.php'
+        params = {
+            'startTime': start_day,
+            'stopTime': end_day,
+            'secret': self.consumer_secret
+        }
+        headers ={
+            'user-agent': 'python'
+        }
+        response = requests.get(url, params=params, headers=headers)
+        self.json = response.json()
+        return self.json
 
 
 def main():

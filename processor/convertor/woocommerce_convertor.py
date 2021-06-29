@@ -49,7 +49,18 @@ class WoocommerceConvertor():
         if len(num) > 10:
             num = num[len(num)-10:]
         return num
+
+    def get_from_form(self):
+        for element in self.json:
+            self.data = self.data.append({
+                'name': self.json[element]['name'], 
+                'phone': self.formate_phone(self.json[element]['phone']), 
+                'ga_id': self.json[element]['_ga'][6:], 
+                'fb_id': self.json[element]['_fbp'][5:]}, ignore_index=True)
+        return self.data
+        
     
+
 def main():
     pass
 

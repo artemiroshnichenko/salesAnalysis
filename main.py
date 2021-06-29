@@ -10,7 +10,7 @@ from processor.worker import clickhouse_worker
 from datetime import datetime
 
 
-def ga(dims, metrcs, start_date, end_date, columns, database, table):    
+def ga(dims, metrcs, start_date, end_date, columns):    
     ga_request = ga_connector.GoogleAnaliticsResolver(
         os.getenv('GA_KEY_FILE_LOCATION'), os.getenv('GA_VIEW_ID'))
     ga_request.initialize_analyticsreporting()
@@ -50,6 +50,15 @@ def woocommerce():
     woo_data = woocommerce_convert.get_data_frame()
     clichouse('client', 'client', woo_data)
 
+def woocommerce_form(start_day, end_day):
+    start_day = int(datetime.timestamp(datetime.strptime(start_day, '%Y-%m-%d')))
+    end_day = int(datetime.timestamp(datetime.strptime(end_day, '%Y-%m-%d')))
+    w = woocommerce_connector.WoocommerceResolver(None, os.getenv('form_secret'))
+    raw = w.get_form(start_day, end_day)
+    c = woocommerce_convertor.WoocommerceConvertor(raw)
+    data = c.get_from_form()
+    clichouse('client', 'client', data)
+
 def clichouse(database, table, data):
     clickhouse = clickhouse_worker.ClickHouseResolver()
     clickhouse.connect_to_client(host=os.getenv('click_host'), 
@@ -72,6 +81,7 @@ def main():
     binotel('2020-05-01', '2021-06-26')
     binotel_get('2020-05-01', '2021-06-26')
     woocommerce()
+    woocommerce_form('2020-05-01', '2021-06-29')
 
 if __name__ == '__main__':
     main()
